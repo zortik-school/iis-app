@@ -5,7 +5,15 @@ import type {
     RefreshResponse,
     RegisterArgs, RegisterResponse
 } from "./model/auth.ts";
-import type {IdentityUserResponse} from "./model/user.ts";
+import type {
+    ChangeRoleArgs,
+    DeleteUserArgs,
+    IdentityUserResponse,
+    ListUsersArgs,
+    ListUsersResponse
+} from "./model/user.ts";
+import type {PageArgs} from "./model/util.ts";
+import {StatusError} from "./error/StatusError.ts";
 
 export interface GatewayService {
 
@@ -29,9 +37,44 @@ export interface GatewayService {
     refresh(): Promise<RefreshResponse>;
 
     /**
+     * Logout the current user.
+     */
+    logout(): Promise<unknown>;
+
+    /**
      * Get the current user's identity.
      */
     getIdentity(): Promise<IdentityUserResponse>;
+
+    /**
+     * List users.
+     *
+     * @param args The args
+     */
+    listUsers(args: ListUsersArgs): Promise<ListUsersResponse>;
+
+    /**
+     * Delete a user.
+     *
+     * @param args The args
+     */
+    deleteUser(args: DeleteUserArgs): Promise<unknown>;
+
+    /**
+     * Change a user's role.
+     *
+     * @param args The args
+     */
+    changeUserRole(args: ChangeRoleArgs): Promise<unknown>;
+}
+
+/**
+ * Create a default gateway service.
+ *
+ * @param baseUrl The base URL
+ */
+export const createDefaultGatewayService = (baseUrl: string) => {
+    return new GatewayServiceImpl(baseUrl);
 }
 
 /**
@@ -57,7 +100,12 @@ export class GatewayServiceImpl implements GatewayService {
             method: "POST",
             body: JSON.stringify(body),
         })
-            .then((res) => this.mapJwtResponse(res));
+            .then((res) => this.mapJwtResponse(res))
+            .catch((err) => {
+                this.mapErrIfStatus(err, 401, new Error("Invalid credentials"));
+
+                throw err;
+            })
     }
 
     async register(args: RegisterArgs): Promise<RegisterResponse> {
@@ -82,8 +130,52 @@ export class GatewayServiceImpl implements GatewayService {
             .then((res) => this.mapJwtResponse(res));
     }
 
+    async logout(): Promise<unknown> {
+        return this.internalFetch<unknown>("/auth/logout", {
+            method: "POST",
+        });
+    }
+
     async getIdentity(): Promise<IdentityUserResponse> {
         return this.internalFetch("/users/me");
+    }
+
+    async listUsers(args: ListUsersArgs): Promise<ListUsersResponse> {
+        const params = this.buildPageParams(args);
+
+        return this.internalFetch<ListUsersResponse>(`/users?${params}`);
+    }
+
+    async deleteUser(args: DeleteUserArgs): Promise<unknown> {
+        return this.internalFetch<unknown>("/users/" + args.userId, {
+            method: "DELETE",
+        });
+    }
+
+    async changeUserRole(args: ChangeRoleArgs): Promise<unknown> {
+        const body = {
+            role: args.role,
+        }
+
+        return this.internalFetch<unknown>(`/users/${args.userId}/role`, {
+            method: "PUT",
+            body: JSON.stringify(body),
+        });
+    }
+
+    /**
+     * Map an error if it matches the given status.
+     *
+     * @param err The error
+     * @param status The status to match
+     * @param mapTo The error to map to
+     */
+    private mapErrIfStatus(err: unknown, status: number, mapTo: Error) {
+        if (err instanceof StatusError) {
+            if (err.status === status) {
+                throw mapTo;
+            }
+        }
     }
 
     /**
@@ -120,6 +212,13 @@ export class GatewayServiceImpl implements GatewayService {
             },
             credentials: "include",
         })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new StatusError(res.status);
+                }
+
+                return res;
+            })
             .then((res) => res.json())
             // All payload is always in the data field
             .then((res) => res.data)
@@ -153,6 +252,23 @@ export class GatewayServiceImpl implements GatewayService {
 
         return params.toString();
     }
+
+    /**
+     * Build page params from args.
+     *
+     * @param args The args
+     * @param additionalParams Additional params to include
+     */
+    private buildPageParams(
+        args: PageArgs, additionalParams?: Record<string, string | number | boolean | undefined>): string {
+        const argsRecord = {
+            pageIndex: args.page.index,
+            pageSize: args.page.size,
+            ...additionalParams,
+        };
+
+        return this.buildQueryParams(argsRecord);
+    }
 }
 
 /**
@@ -174,7 +290,26 @@ export class UnimplementedGatewayService implements GatewayService {
         return this.unimplemented();
     }
 
+    async logout(): Promise<unknown> {
+        return this.unimplemented();
+    }
+
     async getIdentity(): Promise<IdentityUserResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async listUsers(_args: ListUsersArgs): Promise<ListUsersResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async deleteUser(_args: DeleteUserArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async changeUserRole(_args: ChangeRoleArgs): Promise<unknown> {
         return this.unimplemented();
     }
 

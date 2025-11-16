@@ -1,0 +1,10 @@
+import type {Node} from "../components/AppBreadcrumb.tsx";
+
+export const HomeBreadcrumbNodes: Node[] = [
+    { name : 'Home', url: '/app' },
+]
+
+export const UsersBreadcrumbNodes: Node[] = [
+    ...HomeBreadcrumbNodes,
+    { name : 'Users', url: '/app/users' },
+]
