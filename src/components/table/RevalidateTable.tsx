@@ -1,5 +1,5 @@
 import {Button, Stack, Table, Box, Typography, Sheet} from "@mui/joy";
-import type {PageResponse} from "../module/client/model/util.ts";
+import type {PageResponse} from "../../module/client/model/util.ts";
 import {type ReactNode, useCallback, useEffect, useState} from "react";
 
 export interface RevalidateTableProps<T> {
@@ -77,6 +77,7 @@ export const RevalidateTable = <T,>(
                 <Table
                     borderAxis="x"
                     size="md"
+                    hoverRow
                     sx={{
                         tableLayout: 'auto',
                         '--Table-headerUnderlineThickness': '1px',
@@ -98,7 +99,7 @@ export const RevalidateTable = <T,>(
                             <Typography sx={{ p: 2 }}>Loading...</Typography>
                         </Box>
                     )}
-                    {data && children(data.items)}
+                    {!fetching && data && children(data.items)}
                 </Table>
             </Sheet>
 

@@ -8,6 +8,8 @@ import {UsersPage} from "../pages/users/UsersPage.tsx";
 import {PrivilegedPage} from "../middlewares/PrivilegedPage.tsx";
 import {NotFoundPage} from "../pages/NotFoundPage.tsx";
 import {ThemesPage} from "../pages/themes/ThemesPage.tsx";
+import {CreateThemePage} from "../pages/themes/CreateThemePage.tsx";
+import {ThemeSettingsPage} from "../pages/themes/ThemeSettingsPage.tsx";
 
 export const Routes = () => {
     return (
@@ -20,7 +22,11 @@ export const Routes = () => {
                 <Route path="/app" element={<AppPage />} />
                 <Route element={<PrivilegedPage privilege="MANAGE_USERS" />}>
                     <Route path="/app/users" element={<UsersPage />} />
+                </Route>
+                <Route element={<PrivilegedPage privilege="MANAGE_THEMES" />}>
                     <Route path="/app/themes" element={<ThemesPage />} />
+                    <Route path="/app/themes/create" element={<CreateThemePage />} />
+                    <Route path="/app/themes/:themeId/edit" element={<ThemeSettingsPage />} />
                 </Route>
             </Route>
 

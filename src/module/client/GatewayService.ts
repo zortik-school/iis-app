@@ -14,7 +14,13 @@ import type {
 } from "./model/user.ts";
 import type {PageArgs} from "./model/util.ts";
 import {StatusError} from "./error/StatusError.ts";
-import type {ListThemesArgs, ListThemesResponse} from "./model/theme.ts";
+import type {
+    CreateThemeArgs,
+    DeleteThemeArgs,
+    GetThemeArgs, InspectThemeArgs, InspectThemeResponse,
+    ListThemesArgs,
+    ListThemesResponse, Theme, UpdateThemeArgs
+} from "./model/theme.ts";
 
 export interface GatewayService {
 
@@ -67,6 +73,41 @@ export interface GatewayService {
      * @param args The args
      */
     changeUserRole(args: ChangeRoleArgs): Promise<unknown>;
+
+    /**
+     * Create a theme.
+     *
+     * @param args The args
+     */
+    createTheme(args: CreateThemeArgs): Promise<unknown>;
+
+    /**
+     * Delete a theme.
+     *
+     * @param args The args
+     */
+    deleteTheme(args: DeleteThemeArgs): Promise<unknown>;
+
+    /**
+     * Get a theme.
+     *
+     * @param args The args
+     */
+    getTheme(args: GetThemeArgs): Promise<Theme>;
+
+    /**
+     * Inspect a theme.
+     *
+     * @param args The args
+     */
+    inspectTheme(args: InspectThemeArgs): Promise<InspectThemeResponse>;
+
+    /**
+     * Update a theme.
+     *
+     * @param args The args
+     */
+    updateTheme(args: UpdateThemeArgs): Promise<unknown>;
 
     /**
      * List themes.
@@ -166,6 +207,44 @@ export class GatewayServiceImpl implements GatewayService {
         }
 
         return this.internalFetch<unknown>(`/users/${args.userId}/role`, {
+            method: "PUT",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async createTheme(args: CreateThemeArgs): Promise<unknown> {
+        const body = {
+            name: args.name,
+            description: args.description,
+        }
+
+        return this.internalFetch<unknown>(`/themes`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async deleteTheme(args: DeleteThemeArgs): Promise<unknown> {
+        return this.internalFetch<unknown>(`/themes/${args.themeId}`, {
+            method: "DELETE",
+        });
+    }
+
+    async getTheme(args: GetThemeArgs): Promise<Theme> {
+        return this.internalFetch<Theme>(`/themes/${args.themeId}`);
+    }
+
+    async inspectTheme(args: InspectThemeArgs): Promise<InspectThemeResponse> {
+        return this.internalFetch<InspectThemeResponse>(`/themes/${args.themeId}/inspect`);
+    }
+
+    async updateTheme(args: UpdateThemeArgs): Promise<unknown> {
+        const body = {
+            name: args.name,
+            description: args.description,
+        }
+
+        return this.internalFetch<unknown>(`/themes/${args.themeId}`, {
             method: "PUT",
             body: JSON.stringify(body),
         });
@@ -324,6 +403,31 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async changeUserRole(_args: ChangeRoleArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async createTheme(_args: CreateThemeArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async deleteTheme(_args: DeleteThemeArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getTheme(_args: GetThemeArgs): Promise<Theme> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async inspectTheme(_args: InspectThemeArgs): Promise<InspectThemeResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async updateTheme(_args: UpdateThemeArgs): Promise<unknown> {
         return this.unimplemented();
     }
 

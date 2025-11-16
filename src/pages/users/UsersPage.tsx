@@ -1,6 +1,6 @@
 import {MainLayout} from "../../components/layouts/MainLayout.tsx";
 import {UsersBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
-import {RevalidateTable, type RevalidateTableProps} from "../../components/RevalidateTable.tsx";
+import {RevalidateTable, type RevalidateTableProps} from "../../components/table/RevalidateTable.tsx";
 import type {Role, User} from "../../module/client/model/user.ts";
 import {useGateway} from "../../module/client/hooks/useGateway.ts";
 import {useCallback, useState} from "react";
@@ -27,7 +27,7 @@ export const UsersPage = () => {
         return gateway.listUsers({
             page: {
                 index: page,
-                size: 20
+                size: 10
             }
         });
     }, [gateway]);

@@ -15,7 +15,7 @@ export const NotFoundPage = () => {
             >
                 <Typography level="body-md">404 - Page Not Found</Typography>
 
-                <Button variant="outlined" color="neutral" onClick={() => navigate("/")}>Go Back</Button>
+                <Button variant="outlined" color="neutral" onClick={() => navigate(-1)}>Go Back</Button>
             </Card>
         </CenteredLayout>
     )

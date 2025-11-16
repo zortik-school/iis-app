@@ -8,7 +8,7 @@ import {
     ListItem,
     ListItemButton, type ListItemButtonProps,
 } from "@mui/joy";
-import {Home, Group, EmojiPeople} from '@mui/icons-material';
+import {Home, Group, EmojiPeople, KeyboardArrowDown, Campaign} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
 import {type Dispatch, Fragment, type ReactNode, type SetStateAction, useState} from "react";
 import {RestrictedByPrivilege} from "./access/RestrictedByPrivilege.tsx";
@@ -28,7 +28,7 @@ const SidebarButton = (
 
     return (
         <ListItemButton
-            selected={loc.pathname == path}
+            selected={loc.pathname == path || (path !== undefined && loc.pathname.startsWith(path) && path !== "/app")}
             onClick={handleClick}
             sx={{
                 borderRadius: '8px',
@@ -138,11 +138,11 @@ export const Sidebar = () => {
                             <ListItemContent>Themes</ListItemContent>
                         </SidebarButton>
                     </RestrictedByPrivilege>
-                    {/*<ToggleComponent
+                    <ToggleComponent
                         renderToggle={({ open, setOpen }) => (
                             <SidebarButton onClick={() => setOpen(!open)}>
-                                <ListItemDecorator><EmojiPeople /></ListItemDecorator>
-                                <ListItemContent>Themes</ListItemContent>
+                                <ListItemDecorator><Campaign /></ListItemDecorator>
+                                <ListItemContent>Campaigns</ListItemContent>
                                 <KeyboardArrowDown
                                     sx={[
                                         open
@@ -159,10 +159,10 @@ export const Sidebar = () => {
                     >
                         <List sx={{ gap: 0.5 }}>
                             <ListItem>
-                                <ListItemButton>Manage Themes</ListItemButton>
+                                <ListItemButton sx={{ borderRadius: 8 }}>Assigned Campaigns</ListItemButton>
                             </ListItem>
                         </List>
-                    </ToggleComponent>*/}
+                    </ToggleComponent>
                 </List>
             </Box>
         </Sheet>
