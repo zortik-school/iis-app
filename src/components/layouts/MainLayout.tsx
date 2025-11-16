@@ -25,16 +25,20 @@ export const MainLayout = (
                 <Box
                     sx={{
                         width: "100%",
-                        height: "fit-content",
-                        display: "flex",
                     }}
                 >
-                    <Box sx={{ width: "fit-content" }}>
-                        <Typography level="h1">{title}</Typography>
+                    <Box sx={{ width: "100%" }}>
                         <AppBreadcrumb nodes={breadcrumbNodes} />
                     </Box>
+                    <Box sx={{ width: "100%" }}>
+                        <Typography level="h1">{title}</Typography>
+                    </Box>
                 </Box>
-                <Box>
+                <Box
+                    sx={{
+                        py: 2,
+                    }}
+                >
                     {children}
                 </Box>
             </Box>

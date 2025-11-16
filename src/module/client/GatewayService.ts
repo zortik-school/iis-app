@@ -14,6 +14,7 @@ import type {
 } from "./model/user.ts";
 import type {PageArgs} from "./model/util.ts";
 import {StatusError} from "./error/StatusError.ts";
+import type {ListThemesArgs, ListThemesResponse} from "./model/theme.ts";
 
 export interface GatewayService {
 
@@ -66,6 +67,13 @@ export interface GatewayService {
      * @param args The args
      */
     changeUserRole(args: ChangeRoleArgs): Promise<unknown>;
+
+    /**
+     * List themes.
+     *
+     * @param args The args
+     */
+    listThemes(args: ListThemesArgs): Promise<ListThemesResponse>;
 }
 
 /**
@@ -161,6 +169,12 @@ export class GatewayServiceImpl implements GatewayService {
             method: "PUT",
             body: JSON.stringify(body),
         });
+    }
+
+    async listThemes(args: ListThemesArgs): Promise<ListThemesResponse> {
+        const params = this.buildPageParams(args);
+
+        return this.internalFetch<ListThemesResponse>(`/themes?${params}`);
     }
 
     /**
@@ -310,6 +324,11 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async changeUserRole(_args: ChangeRoleArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async listThemes(_args: ListThemesArgs): Promise<ListThemesResponse> {
         return this.unimplemented();
     }
 

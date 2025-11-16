@@ -7,6 +7,7 @@ import {AppPage} from "../pages/AppPage.tsx";
 import {UsersPage} from "../pages/users/UsersPage.tsx";
 import {PrivilegedPage} from "../middlewares/PrivilegedPage.tsx";
 import {NotFoundPage} from "../pages/NotFoundPage.tsx";
+import {ThemesPage} from "../pages/themes/ThemesPage.tsx";
 
 export const Routes = () => {
     return (
@@ -19,6 +20,7 @@ export const Routes = () => {
                 <Route path="/app" element={<AppPage />} />
                 <Route element={<PrivilegedPage privilege="MANAGE_USERS" />}>
                     <Route path="/app/users" element={<UsersPage />} />
+                    <Route path="/app/themes" element={<ThemesPage />} />
                 </Route>
             </Route>
 

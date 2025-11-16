@@ -1,33 +1,29 @@
 import {
     Box,
-    Dropdown,
-    IconButton,
     ListItemContent,
     ListItemDecorator,
-    Menu,
-    MenuButton,
-    MenuItem,
     Sheet,
     Typography,
     List,
     ListItem,
-    ListItemButton,
+    ListItemButton, type ListItemButtonProps,
 } from "@mui/joy";
-import Person2 from '@mui/icons-material/Person2';
-import Home from '@mui/icons-material/Home';
-import {useAuth} from "../module/auth/hooks/useAuth.ts";
+import {Home, Group, EmojiPeople} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
-import type {PropsWithChildren} from "react";
+import {type Dispatch, Fragment, type ReactNode, type SetStateAction, useState} from "react";
 import {RestrictedByPrivilege} from "./access/RestrictedByPrivilege.tsx";
+import {ProfileDropdown} from "./ProfileDropdown.tsx";
 
 const SidebarButton = (
-    {path, children}: PropsWithChildren & { path: string }
+    {path, children, ...rest}: ListItemButtonProps & { path?: string }
 ) => {
     const loc = useLocation();
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(path);
+        if (path) {
+            navigate(path);
+        }
     }
 
     return (
@@ -37,20 +33,52 @@ const SidebarButton = (
             sx={{
                 borderRadius: '8px',
             }}
+            {...rest}
         >
             {children}
         </ListItemButton>
     )
 }
 
+type TogglerProps = {
+    defaultExpanded?: boolean;
+    children: ReactNode;
+    renderToggle: (params: {
+        open: boolean;
+        setOpen: Dispatch<SetStateAction<boolean>>;
+    }) => ReactNode;
+}
+
+export const ToggleComponent = ({
+        defaultExpanded = false,
+        renderToggle,
+        children
+    }: TogglerProps) => {
+    const [open, setOpen] = useState(defaultExpanded);
+
+    return (
+        <Fragment>
+            {renderToggle({ open, setOpen })}
+
+            <Box
+                sx={[
+                    {
+                        display: 'grid',
+                        transition: '0.2s ease',
+                        '& > *': {
+                            overflow: 'hidden',
+                        },
+                    },
+                    open ? { gridTemplateRows: '1fr' } : { gridTemplateRows: '0fr' },
+                ]}
+            >
+                {open ? children : null}
+            </Box>
+        </Fragment>
+    );
+}
+
 export const Sidebar = () => {
-    const {logout} = useAuth();
-    const navigate = useNavigate();
-
-    const handleLogoutClick = () => {
-        logout().then(() => navigate("/"));
-    }
-
     return (
         <Sheet
             color="neutral"
@@ -80,25 +108,16 @@ export const Sidebar = () => {
                         ml: 1,
                     }}
                 >IIS</Typography>
-                <Dropdown>
-                    <MenuButton
-                        slots={{ root: IconButton }}
-                        slotProps={{ root: { variant: 'outlined', color: 'neutral', size: 'sm' } }}
-                        sx={{
-                            ml: 'auto',
-                        }}
-                    >
-                        <Person2 />
-                    </MenuButton>
 
-                    <Menu placement="bottom-start">
-                        <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-                    </Menu>
-                </Dropdown>
+                <ProfileDropdown />
             </Box>
 
             <Box>
-                <List>
+                <List
+                    sx={{
+                        gap: 1,
+                    }}
+                >
                     <ListItem>
                         <SidebarButton path="/app">
                             <ListItemDecorator><Home /></ListItemDecorator>
@@ -108,11 +127,42 @@ export const Sidebar = () => {
                     <RestrictedByPrivilege privilege="MANAGE_USERS">
                         <ListItem>
                             <SidebarButton path="/app/users">
-                                <ListItemDecorator><Home /></ListItemDecorator>
+                                <ListItemDecorator><Group /></ListItemDecorator>
                                 <ListItemContent>Users</ListItemContent>
                             </SidebarButton>
                         </ListItem>
                     </RestrictedByPrivilege>
+                    <RestrictedByPrivilege privilege="MANAGE_THEMES">
+                        <SidebarButton path="/app/themes">
+                            <ListItemDecorator><EmojiPeople /></ListItemDecorator>
+                            <ListItemContent>Themes</ListItemContent>
+                        </SidebarButton>
+                    </RestrictedByPrivilege>
+                    {/*<ToggleComponent
+                        renderToggle={({ open, setOpen }) => (
+                            <SidebarButton onClick={() => setOpen(!open)}>
+                                <ListItemDecorator><EmojiPeople /></ListItemDecorator>
+                                <ListItemContent>Themes</ListItemContent>
+                                <KeyboardArrowDown
+                                    sx={[
+                                        open
+                                            ? {
+                                                transform: 'rotate(180deg)',
+                                            }
+                                            : {
+                                                transform: 'none',
+                                            },
+                                    ]}
+                                />
+                            </SidebarButton>
+                        )}
+                    >
+                        <List sx={{ gap: 0.5 }}>
+                            <ListItem>
+                                <ListItemButton>Manage Themes</ListItemButton>
+                            </ListItem>
+                        </List>
+                    </ToggleComponent>*/}
                 </List>
             </Box>
         </Sheet>

@@ -1,8 +1,10 @@
 import type {PageArgs, PageResponse} from "./util.ts";
 
-export type Role = "ADMIN" | "USER";
+export type Role = "ADMIN"
+    | "USER";
 
-export type Privilege = "MANAGE_USERS";
+export type Privilege = "MANAGE_USERS"
+    | "MANAGE_THEMES";
 
 export interface User {
     id: number;
