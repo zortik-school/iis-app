@@ -23,3 +23,8 @@ export const ThemeEditBreadcrumbNodes: Node[] = [
     ...ThemesBreadcrumbNodes,
     { name : 'Edit Theme', url: '' },
 ]
+
+export const AssignedCampaignsBreadcrumbNodes: Node[] = [
+    ...HomeBreadcrumbNodes,
+    { name : 'Assigned Campaigns', url: '/app/campaigns/assigned' },
+]

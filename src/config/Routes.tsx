@@ -10,6 +10,7 @@ import {NotFoundPage} from "../pages/NotFoundPage.tsx";
 import {ThemesPage} from "../pages/themes/ThemesPage.tsx";
 import {CreateThemePage} from "../pages/themes/CreateThemePage.tsx";
 import {ThemeSettingsPage} from "../pages/themes/ThemeSettingsPage.tsx";
+import {AssignedCampaignsPage} from "../pages/campaigns/AssignedCampaignsPage.tsx";
 
 export const Routes = () => {
     return (
@@ -28,6 +29,7 @@ export const Routes = () => {
                     <Route path="/app/themes/create" element={<CreateThemePage />} />
                     <Route path="/app/themes/:themeId/edit" element={<ThemeSettingsPage />} />
                 </Route>
+                <Route path="/app/campaigns/assigned" element={<AssignedCampaignsPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

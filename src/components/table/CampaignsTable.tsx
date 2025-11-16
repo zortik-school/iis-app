@@ -4,7 +4,8 @@ import {Fragment, useEffect, useState} from "react";
 import type {Campaign} from "../../module/client/model/campaign.ts";
 import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
 import {DeleteForever} from "@mui/icons-material";
-import {Button} from "@mui/joy";
+import {Button, Link} from "@mui/joy";
+import {Link as RouterLink} from "react-router";
 
 export interface CampaignsTableProps {
     themeId?: number;
@@ -63,7 +64,16 @@ export const CampaignsTable = (
                     <tbody>
                     {campaigns.map((campaign) => (
                         <tr key={campaign.id}>
-                            <td>{campaign.name}</td>
+                            <td>
+                                <Link
+                                    component={RouterLink}
+                                    to={`/app/campaigns/${campaign.id}/edit`}
+                                    underline="hover"
+                                    color="primary"
+                                >
+                                    {campaign.name}
+                                </Link>
+                            </td>
                             {privileged && (
                                 <td>
                                     <Button

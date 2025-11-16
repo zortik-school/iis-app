@@ -15,7 +15,7 @@ import {RestrictedByPrivilege} from "./access/RestrictedByPrivilege.tsx";
 import {ProfileDropdown} from "./ProfileDropdown.tsx";
 
 const SidebarButton = (
-    {path, children, ...rest}: ListItemButtonProps & { path?: string }
+    {path, preventHighlight, children, ...rest}: ListItemButtonProps & { path?: string, preventHighlight?: boolean }
 ) => {
     const loc = useLocation();
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const SidebarButton = (
 
     return (
         <ListItemButton
-            selected={loc.pathname == path || (path !== undefined && loc.pathname.startsWith(path) && path !== "/app")}
+            selected={preventHighlight != true && (loc.pathname == path || (path !== undefined && loc.pathname.startsWith(path) && path !== "/app"))}
             onClick={handleClick}
             sx={{
                 borderRadius: '8px',
@@ -159,7 +159,11 @@ export const Sidebar = () => {
                     >
                         <List sx={{ gap: 0.5 }}>
                             <ListItem>
-                                <ListItemButton sx={{ borderRadius: 8 }}>Assigned Campaigns</ListItemButton>
+                                <SidebarButton
+                                    path="/app/campaigns/assigned"
+                                    sx={{ borderRadius: 8 }}
+                                    preventHighlight
+                                >Assigned Campaigns</SidebarButton>
                             </ListItem>
                         </List>
                     </ToggleComponent>
