@@ -23,6 +23,7 @@ import {type SubmitHandler, useForm} from "react-hook-form";
 import {useState} from "react";
 import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
 import {useNotification} from "../../hooks/useNotification.ts";
+import {CampaignsTable} from "../../components/table/CampaignsTable.tsx";
 
 type ThemeEditInputs = {
     themeName: string;
@@ -148,7 +149,7 @@ export const ThemeSettingsPage = () => {
                         <Typography>{data?.description}</Typography>
                     </TabPanel>
                     <TabPanel value={1}>
-                        {/* TODO: Campaigns */}
+                        <CampaignsTable themeId={Number(themeId)} />
                     </TabPanel>
                     <TabPanel value={2} sx={{ px: 0 }}>
                         <Card variant="plain">

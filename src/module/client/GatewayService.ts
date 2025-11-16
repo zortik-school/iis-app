@@ -21,6 +21,7 @@ import type {
     ListThemesArgs,
     ListThemesResponse, Theme, UpdateThemeArgs
 } from "./model/theme.ts";
+import type {ListCampaignsArgs, ListCampaignsResponse} from "./model/campaign.ts";
 
 export interface GatewayService {
 
@@ -115,6 +116,13 @@ export interface GatewayService {
      * @param args The args
      */
     listThemes(args: ListThemesArgs): Promise<ListThemesResponse>;
+
+    /**
+     * List campaigns.
+     *
+     * @param args The args
+     */
+    listCampaigns(args: ListCampaignsArgs): Promise<ListCampaignsResponse>;
 }
 
 /**
@@ -254,6 +262,16 @@ export class GatewayServiceImpl implements GatewayService {
         const params = this.buildPageParams(args);
 
         return this.internalFetch<ListThemesResponse>(`/themes?${params}`);
+    }
+
+    async listCampaigns(args: ListCampaignsArgs): Promise<ListCampaignsResponse> {
+        const additionalParams = {
+            ...args.themeId !== undefined ? {themeId: args.themeId} : {},
+            ...args.assigned !== undefined ? {assigned: args.assigned} : {},
+        }
+        const params = this.buildPageParams(args, additionalParams);
+
+        return this.internalFetch<ListCampaignsResponse>(`/campaigns?${params}`);
     }
 
     /**
@@ -433,6 +451,11 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async listThemes(_args: ListThemesArgs): Promise<ListThemesResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async listCampaigns(_args: ListCampaignsArgs): Promise<ListCampaignsResponse> {
         return this.unimplemented();
     }
 
