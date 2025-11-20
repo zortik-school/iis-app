@@ -4,7 +4,8 @@ export type Role = "ADMIN"
     | "USER";
 
 export type Privilege = "MANAGE_USERS"
-    | "MANAGE_THEMES";
+    | "MANAGE_THEMES"
+    | "MANAGE_CAMPAIGNS";
 
 export interface User {
     id: number;

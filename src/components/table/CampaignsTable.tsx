@@ -24,7 +24,7 @@ export const CampaignsTable = (
 
     useEffect(() => {
         (() => {
-            setPrivileged(user!.privileges.includes("MANAGE_THEMES"));
+            setPrivileged(user!.privileges.includes("MANAGE_CAMPAIGNS"));
         })();
     }, [user]);
 
