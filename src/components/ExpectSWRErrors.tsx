@@ -5,22 +5,31 @@ import {Typography} from "@mui/joy";
 
 export interface ExpectSWRErrorsProps extends PropsWithChildren {
     errors: Parameters<typeof useSWR>[2][],
+    customErrorMessageFunc?: (error: Error) => string|undefined,
 }
 
 export const ExpectSWRErrors = (
-    {errors, children}: ExpectSWRErrorsProps
+    {errors, customErrorMessageFunc, children}: ExpectSWRErrorsProps
 ) => {
     const [anyError, setAnyError] = useState<Error | undefined>(undefined);
+    const [customErrorMessage, setCustomErrorMessage] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         (() => {
-            setAnyError(errors.find(error => error instanceof Error));
+            const errorFound = errors.find(error => error instanceof Error);
+
+            setAnyError(errorFound);
+            setCustomErrorMessage(() => {
+                if (customErrorMessageFunc && errorFound) {
+                    return customErrorMessageFunc(errorFound);
+                }
+            });
         })();
-    }, [errors]);
+    }, [customErrorMessageFunc, errors]);
 
     return anyError ? (
         <CenteredLayout>
-            <Typography>An unexpected error occured.</Typography>
+            <Typography>{customErrorMessage ?? "An unexpected error occured."}</Typography>
         </CenteredLayout>
     ) : (
         children

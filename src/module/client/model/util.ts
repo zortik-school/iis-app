@@ -22,3 +22,10 @@ export interface PageResponse<T> {
         totalPages: number;
     }
 }
+
+export type QueryArgs = PageArgs & {
+    /**
+     * The search query.
+     */
+    query: string;
+}

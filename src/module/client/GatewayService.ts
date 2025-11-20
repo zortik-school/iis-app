@@ -7,10 +7,10 @@ import type {
 } from "./model/auth.ts";
 import type {
     ChangeRoleArgs,
-    DeleteUserArgs,
+    DeleteUserArgs, GetUserArgs, GetUserResponse,
     IdentityUserResponse,
     ListUsersArgs,
-    ListUsersResponse
+    ListUsersResponse, QueryUsersArgs, QueryUsersResponse
 } from "./model/user.ts";
 import type {PageArgs} from "./model/util.ts";
 import {StatusError} from "./error/StatusError.ts";
@@ -21,7 +21,13 @@ import type {
     ListThemesArgs,
     ListThemesResponse, Theme, UpdateThemeArgs
 } from "./model/theme.ts";
-import type {ListCampaignsArgs, ListCampaignsResponse} from "./model/campaign.ts";
+import type {
+    AssignUserToCampaignArgs,
+    CreateCampaignArgs, CreateCampaignResponse,
+    DeleteCampaignArgs, InspectCampaignArgs, InspectCampaignResponse,
+    ListCampaignsArgs,
+    ListCampaignsResponse
+} from "./model/campaign.ts";
 
 export interface GatewayService {
 
@@ -67,6 +73,13 @@ export interface GatewayService {
      * @param args The args
      */
     deleteUser(args: DeleteUserArgs): Promise<unknown>;
+
+    /**
+     * Get a user.
+     *
+     * @param args The args
+     */
+    getUser(args: GetUserArgs): Promise<GetUserResponse>;
 
     /**
      * Change a user's role.
@@ -123,6 +136,41 @@ export interface GatewayService {
      * @param args The args
      */
     listCampaigns(args: ListCampaignsArgs): Promise<ListCampaignsResponse>;
+
+    /**
+     * Create a campaign.
+     *
+     * @param args The args
+     */
+    createCampaign(args: CreateCampaignArgs): Promise<CreateCampaignResponse>;
+
+    /**
+     * Delete a campaign.
+     *
+     * @param args The args
+     */
+    deleteCampaign(args: DeleteCampaignArgs): Promise<unknown>;
+
+    /**
+     * Inspect a campaign.
+     *
+     * @param args The args
+     */
+    inspectCampaign(args: InspectCampaignArgs): Promise<InspectCampaignResponse>;
+
+    /**
+     * Assign a user to a campaign.
+     *
+     * @param args The args
+     */
+    assignUserToCampaign(args: AssignUserToCampaignArgs): Promise<unknown>;
+
+    /**
+     * Query users.
+     *
+     * @param args The args
+     */
+    queryUsers(args: QueryUsersArgs): Promise<QueryUsersResponse>;
 }
 
 /**
@@ -209,6 +257,10 @@ export class GatewayServiceImpl implements GatewayService {
         });
     }
 
+    async getUser(args: GetUserArgs): Promise<GetUserResponse> {
+        return this.internalFetch<GetUserResponse>(`/users/${args.userId}`);
+    }
+
     async changeUserRole(args: ChangeRoleArgs): Promise<unknown> {
         const body = {
             role: args.role,
@@ -272,6 +324,47 @@ export class GatewayServiceImpl implements GatewayService {
         const params = this.buildPageParams(args, additionalParams);
 
         return this.internalFetch<ListCampaignsResponse>(`/campaigns?${params}`);
+    }
+
+    async createCampaign(args: CreateCampaignArgs): Promise<CreateCampaignResponse> {
+        const body = {
+            name: args.name,
+            themeId: args.themeId,
+        }
+
+        return this.internalFetch<CreateCampaignResponse>(`/campaigns`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async deleteCampaign(args: DeleteCampaignArgs): Promise<unknown> {
+        return this.internalFetch<unknown>(`/campaigns/${args.campaignId}`, {
+            method: "DELETE",
+        });
+    }
+
+    async inspectCampaign(args: InspectCampaignArgs): Promise<InspectCampaignResponse> {
+        return this.internalFetch<InspectCampaignResponse>(`/campaigns/${args.campaignId}/inspect`);
+    }
+
+    async assignUserToCampaign(args: AssignUserToCampaignArgs): Promise<unknown> {
+        const body = {
+            userId: args.userId,
+        }
+
+        return this.internalFetch<unknown>(`/campaigns/${args.campaignId}/assign`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async queryUsers(args: QueryUsersArgs): Promise<QueryUsersResponse> {
+        const params = this.buildPageParams(args, {
+            query: args.query,
+        });
+
+        return this.internalFetch<QueryUsersResponse>(`/query/users?${params}`);
     }
 
     /**
@@ -420,6 +513,11 @@ export class UnimplementedGatewayService implements GatewayService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getUser(_args: GetUserArgs): Promise<GetUserResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async changeUserRole(_args: ChangeRoleArgs): Promise<unknown> {
         return this.unimplemented();
     }
@@ -456,6 +554,31 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async listCampaigns(_args: ListCampaignsArgs): Promise<ListCampaignsResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async createCampaign(_args: CreateCampaignArgs): Promise<CreateCampaignResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async deleteCampaign(_args: DeleteCampaignArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async inspectCampaign(_args: InspectCampaignArgs): Promise<InspectCampaignResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async assignUserToCampaign(_args: AssignUserToCampaignArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async queryUsers(_args: QueryUsersArgs): Promise<QueryUsersResponse> {
         return this.unimplemented();
     }
 

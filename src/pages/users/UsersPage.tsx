@@ -9,6 +9,7 @@ import {type Question, useConfirmModal} from "../../components/modal/ConfirmModa
 import { ArrowDropDown, DeleteForever } from "@mui/icons-material";
 import {humanifyRole} from "../../module/shared/util/role.ts";
 import {useAuth} from "../../module/auth/hooks/useAuth.ts";
+import {UserLink} from "../../components/UserLink.tsx";
 
 export const UsersPage = () => {
     const {user} = useAuth();
@@ -84,7 +85,7 @@ export const UsersPage = () => {
                         {items.map((user) => (
                             <tr key={user.id}>
                                 <td>{user.username}</td>
-                                <td>{user.name}</td>
+                                <td><UserLink userId={user.id}>{user.name}</UserLink> </td>
                                 <td>
                                     <Dropdown>
                                         <MenuButton

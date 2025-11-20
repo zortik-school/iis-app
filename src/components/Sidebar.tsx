@@ -8,7 +8,7 @@ import {
     ListItem,
     ListItemButton, type ListItemButtonProps,
 } from "@mui/joy";
-import {Home, Group, EmojiPeople, KeyboardArrowDown, Campaign} from '@mui/icons-material';
+import {Home, Group, KeyboardArrowDown, Campaign, Groups} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
 import {type Dispatch, Fragment, type ReactNode, type SetStateAction, useState} from "react";
 import {RestrictedByPrivilege} from "./access/RestrictedByPrivilege.tsx";
@@ -134,7 +134,7 @@ export const Sidebar = () => {
                     </RestrictedByPrivilege>
                     <RestrictedByPrivilege privilege="MANAGE_THEMES">
                         <SidebarButton path="/app/themes">
-                            <ListItemDecorator><EmojiPeople /></ListItemDecorator>
+                            <ListItemDecorator><Groups /></ListItemDecorator>
                             <ListItemContent>Themes</ListItemContent>
                         </SidebarButton>
                     </RestrictedByPrivilege>

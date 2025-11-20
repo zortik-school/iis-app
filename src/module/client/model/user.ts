@@ -1,4 +1,4 @@
-import type {PageArgs, PageResponse} from "./util.ts";
+import type {PageArgs, PageResponse, QueryArgs} from "./util.ts";
 
 export type Role = "ADMIN"
     | "USER";
@@ -32,3 +32,13 @@ export type ChangeRoleArgs = {
     userId: number;
     role: Role;
 }
+
+export type QueryUsersArgs = QueryArgs;
+
+export type QueryUsersResponse = PageResponse<User>;
+
+export type GetUserArgs = {
+    userId: number;
+}
+
+export type GetUserResponse = User;

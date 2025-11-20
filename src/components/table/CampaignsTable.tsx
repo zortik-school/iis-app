@@ -6,6 +6,7 @@ import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
 import {DeleteForever} from "@mui/icons-material";
 import {Button, Link} from "@mui/joy";
 import {Link as RouterLink} from "react-router";
+import {type Question, useConfirmModal} from "../modal/ConfirmModalContext.tsx";
 
 export interface CampaignsTableProps {
     themeId?: number;
@@ -17,6 +18,7 @@ export const CampaignsTable = (
 ) => {
     const gatewayCall = useGatewayCall();
     const {user} = useAuth();
+    const {setQuestion} = useConfirmModal();
 
     const [integrityKey, setIntegrityKey] = useState<number>(0);
     const [privileged, setPrivileged] = useState<boolean>(false);
@@ -42,13 +44,19 @@ export const CampaignsTable = (
     }
 
     const handleDelete = (id: number) => {
-        setControlsLocked(true);
+        const question: Question = {
+            title: "Delete Campaign?",
+            message: "Are you sure you want to delete this campaign? This action cannot be undone.",
+            onConfirm: () => {
+                setControlsLocked(true);
 
-        gatewayCall((gateway) => {
-            // TODO: delete campaign
-        })
-            .then(() => setIntegrityKey(Date.now()))
-            .finally(() => setControlsLocked(false));
+                gatewayCall((gateway) => gateway.deleteCampaign({ campaignId: id }))
+                    .then(() => setIntegrityKey(Date.now()))
+                    .finally(() => setControlsLocked(false));
+            }
+        };
+
+        setQuestion(question);
     }
 
     return (
@@ -58,7 +66,7 @@ export const CampaignsTable = (
                     <thead>
                     <tr>
                         <th>Name</th>
-                        {privileged && <th />}
+                        {privileged && <th style={{ width: '50px' }} />}
                     </tr>
                     </thead>
                     <tbody>

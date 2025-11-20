@@ -1,5 +1,5 @@
 import {MainLayout} from "../../components/layouts/MainLayout.tsx";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {ThemeEditBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
 import useSWR from "swr";
 import {useGateway} from "../../module/client/hooks/useGateway.ts";
@@ -107,6 +107,7 @@ export const ThemeSettingsPage = () => {
     const {themeId} = useParams<{ themeId: string }>();
 
     const gateway = useGateway();
+    const navigate = useNavigate();
 
     const {data, error, isLoading, mutate} = useSWR("theme", () => gateway.inspectTheme({ themeId: Number(themeId) }));
 
@@ -116,51 +117,62 @@ export const ThemeSettingsPage = () => {
 
     return (
         <ExpectSWRErrors errors={[error]}>
-            <MainLayout
-                title={data!.name}
-                breadcrumbNodes={ThemeEditBreadcrumbNodes}
-            >
-                <Tabs
-                    aria-label="tabs"
-                    defaultValue={0}
-                    sx={{
-                        bgcolor: 'transparent'
-                    }}
+            {data && (
+                <MainLayout
+                    title={data.name}
+                    breadcrumbNodes={ThemeEditBreadcrumbNodes}
                 >
-                    <TabList
-                        disableUnderline
+                    <Tabs
+                        aria-label="tabs"
+                        defaultValue={0}
                         sx={{
-                            p: 0.5,
-                            gap: 0.5,
-                            borderRadius: 'lg',
-                            bgcolor: 'background.level1',
-                            [`& .${tabClasses.root}[aria-selected="true"]`]: {
-                                bgcolor: 'background.surface',
-                            },
-                            maxWidth: "fit-content"
+                            bgcolor: 'transparent'
                         }}
                     >
-                        <Tab disableIndicator>Info</Tab>
-                        <Tab disableIndicator>Campaigns</Tab>
-                        <Tab disableIndicator>Settings</Tab>
-                    </TabList>
-                    <TabPanel value={0}>
-                        <Typography level="title-lg">Description</Typography>
-                        <Typography>{data?.description}</Typography>
-                    </TabPanel>
-                    <TabPanel value={1}>
-                        <CampaignsTable themeId={Number(themeId)} />
-                    </TabPanel>
-                    <TabPanel value={2} sx={{ px: 0 }}>
-                        <Card variant="plain">
-                            <CardContent>
-                                <Typography level="title-lg">Edit Details</Typography>
-                                <Typography sx={{ mb: 2 }}>Here you can edit the details of the theme.</Typography>
+                        <TabList
+                            disableUnderline
+                            sx={{
+                                p: 0.5,
+                                gap: 0.5,
+                                borderRadius: 'lg',
+                                bgcolor: 'background.level1',
+                                [`& .${tabClasses.root}[aria-selected="true"]`]: {
+                                    bgcolor: 'background.surface',
+                                },
+                                maxWidth: "fit-content"
+                            }}
+                        >
+                            <Tab disableIndicator>Info</Tab>
+                            <Tab disableIndicator>Campaigns</Tab>
+                            <Tab disableIndicator>Settings</Tab>
+                        </TabList>
+                        <TabPanel value={0}>
+                            <Typography level="title-lg">Description</Typography>
+                            <Typography>{data?.description}</Typography>
+                        </TabPanel>
+                        <TabPanel value={1}>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "flex-start",
+                                    mb: 2,
+                                }}
+                            >
+                                <Button onClick={() => navigate(`/app/themes/${themeId}/createcampaign`)}>Add Campaign</Button>
+                            </Box>
+                            <CampaignsTable themeId={Number(themeId)} />
+                        </TabPanel>
+                        <TabPanel value={2} sx={{ px: 0 }}>
+                            <Card variant="plain">
+                                <CardContent>
+                                    <Typography level="title-lg">Edit Details</Typography>
+                                    <Typography sx={{ mb: 2 }}>Here you can edit the details of the theme.</Typography>
 
-                                <ThemeEditForm data={data!} onUpdate={() => mutate()} />
-                            </CardContent>
-                        </Card>
-                        {/*<Card
+                                    <ThemeEditForm data={data} onUpdate={() => mutate()} />
+                                </CardContent>
+                            </Card>
+                            {/*<Card
                             variant="outlined"
                             color="danger"
                         >
@@ -180,9 +192,10 @@ export const ThemeSettingsPage = () => {
                                 </Button>
                             </CardContent>
                         </Card>*/}
-                    </TabPanel>
-                </Tabs>
-            </MainLayout>
+                        </TabPanel>
+                    </Tabs>
+                </MainLayout>
+            )}
         </ExpectSWRErrors>
     )
 }

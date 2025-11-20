@@ -3,6 +3,7 @@ import type {PageArgs, PageResponse} from "./util.ts";
 export interface Campaign {
     id: number;
     name: string;
+    themeId: number;
 }
 
 export interface ListCampaignsArgs extends PageArgs {
@@ -18,3 +19,28 @@ export interface ListCampaignsArgs extends PageArgs {
 }
 
 export type ListCampaignsResponse = PageResponse<Campaign>;
+
+export interface CreateCampaignArgs {
+    name: string;
+    themeId: number;
+}
+
+export type CreateCampaignResponse = Campaign;
+
+export interface DeleteCampaignArgs {
+    campaignId: number;
+}
+
+export interface InspectCampaignArgs {
+    campaignId: number;
+}
+
+export interface InspectCampaignResponse {
+    campaign: Campaign;
+    assignedUserId?: number;
+}
+
+export interface AssignUserToCampaignArgs {
+    campaignId: number;
+    userId?: number;
+}

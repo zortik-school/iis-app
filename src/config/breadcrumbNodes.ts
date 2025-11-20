@@ -1,4 +1,5 @@
 import type {Node} from "../components/AppBreadcrumb.tsx";
+import type {Campaign} from "../module/client/model/campaign.ts";
 
 export const HomeBreadcrumbNodes: Node[] = [
     { name : 'Home', url: '/app' },
@@ -27,4 +28,10 @@ export const ThemeEditBreadcrumbNodes: Node[] = [
 export const AssignedCampaignsBreadcrumbNodes: Node[] = [
     ...HomeBreadcrumbNodes,
     { name : 'Assigned Campaigns', url: '/app/campaigns/assigned' },
+]
+
+export const CampaignEditBreadcrumbNodes = (campaign: Campaign): Node[] => [
+    ...HomeBreadcrumbNodes,
+    { name : 'Theme', url: `/app/themes/${campaign.themeId}/edit` },
+    { name : 'Edit Campaign', url: '' },
 ]
