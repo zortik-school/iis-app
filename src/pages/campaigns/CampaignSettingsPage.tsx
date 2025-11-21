@@ -1,4 +1,4 @@
-import {useParams, Link as RouterLink} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import {MainLayout} from "../../components/layouts/MainLayout.tsx";
 import {CampaignEditBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
 import useSWR from "swr";
@@ -23,8 +23,7 @@ import {
     FormLabel,
     Input,
     ButtonGroup,
-    Chip,
-    Link
+    Chip
 } from "@mui/joy";
 import {UserSelector} from "../../components/UserSelector.tsx";
 import type {User} from "../../module/client/model/user.ts";
@@ -35,6 +34,7 @@ import type {Theme} from "../../module/client/model/theme.ts";
 import {UserLink} from "../../components/UserLink.tsx";
 import type {CampaignStep, CampaignStepFull} from "../../module/client/model/step.ts";
 import {type SubmitHandler, useForm} from "react-hook-form";
+import {StepLink} from "../../components/StepLink.tsx";
 
 interface AddStepFormInputs {
     name: string;
@@ -100,6 +100,7 @@ export const CampaignSettingsPage = () => {
 
     const gateway = useGateway();
     const gatewayCall = useGatewayCall();
+    const navigate = useNavigate();
 
     const {data, isLoading, error, mutate} = useSWR(
         "campaign",
@@ -256,10 +257,10 @@ export const CampaignSettingsPage = () => {
                             <Box>
                                 <Typography level="title-lg">Active Step</Typography>
                                 {activeStep ? (
-                                    <Link component={RouterLink} to={`/steps/${activeStep.id}/edit`}>
-                                        {activeStep.name}
-                                    </Link>
-                                ) : <Typography>None</Typography>}
+                                    <StepLink stepId={activeStep.id}>{activeStep.name}</StepLink>
+                                ) : (
+                                    <Typography>None</Typography>
+                                )}
                             </Box>
                         </TabPanel>
                         <TabPanel value={1}>
@@ -302,9 +303,7 @@ export const CampaignSettingsPage = () => {
                                                     <Chip
                                                         color="neutral"
                                                         variant="outlined"
-                                                        onClick={() => {
-                                                            {/* TODO */}
-                                                        }}
+                                                        onClick={() => navigate(`/app/steps/${step.id}/edit`)}
                                                     >
                                                         Edit
                                                     </Chip>

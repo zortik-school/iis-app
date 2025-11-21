@@ -138,73 +138,77 @@ export const Sidebar = () => {
                             <ListItemContent>Themes</ListItemContent>
                         </SidebarButton>
                     </RestrictedByPrivilege>
-                    <ToggleComponent
-                        renderToggle={({ open, setOpen }) => (
-                            <SidebarButton onClick={() => setOpen(!open)}>
-                                <ListItemDecorator><Campaign /></ListItemDecorator>
-                                <ListItemContent>Campaigns</ListItemContent>
-                                <KeyboardArrowDown
-                                    sx={[
-                                        open
-                                            ? {
-                                                transform: 'rotate(180deg)',
-                                            }
-                                            : {
-                                                transform: 'none',
-                                            },
-                                    ]}
-                                />
-                            </SidebarButton>
-                        )}
-                    >
-                        <List sx={{ gap: 0.5 }}>
-                            <ListItem>
-                                <SidebarButton
-                                    path="/app/campaigns/assigned"
-                                    sx={{ borderRadius: 8 }}
-                                    preventHighlight
-                                >Assigned Campaigns</SidebarButton>
-                            </ListItem>
-                            <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
+                    <RestrictedByPrivilege privilege="VIEW_ASSIGNED_CAMPAIGNS">
+                        <ToggleComponent
+                            renderToggle={({ open, setOpen }) => (
+                                <SidebarButton onClick={() => setOpen(!open)}>
+                                    <ListItemDecorator><Campaign /></ListItemDecorator>
+                                    <ListItemContent>Campaigns</ListItemContent>
+                                    <KeyboardArrowDown
+                                        sx={[
+                                            open
+                                                ? {
+                                                    transform: 'rotate(180deg)',
+                                                }
+                                                : {
+                                                    transform: 'none',
+                                                },
+                                        ]}
+                                    />
+                                </SidebarButton>
+                            )}
+                        >
+                            <List sx={{ gap: 0.5 }}>
+                                <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
+                                    <ListItem>
+                                        <SidebarButton
+                                            path="/app/campaigns"
+                                            sx={{ borderRadius: 8 }}
+                                            preventHighlight
+                                        >All Campaigns</SidebarButton>
+                                    </ListItem>
+                                </RestrictedByPrivilege>
                                 <ListItem>
                                     <SidebarButton
-                                        path="/app/campaigns"
+                                        path="/app/campaigns/assigned"
                                         sx={{ borderRadius: 8 }}
                                         preventHighlight
-                                    >All Campaigns</SidebarButton>
+                                    >Assigned Campaigns</SidebarButton>
                                 </ListItem>
-                            </RestrictedByPrivilege>
-                        </List>
-                    </ToggleComponent>
-                    <ToggleComponent
-                        renderToggle={({ open, setOpen }) => (
-                            <SidebarButton onClick={() => setOpen(!open)}>
-                                <ListItemDecorator><FormatListBulleted /></ListItemDecorator>
-                                <ListItemContent>Steps</ListItemContent>
-                                <KeyboardArrowDown
-                                    sx={[
-                                        open
-                                            ? {
-                                                transform: 'rotate(180deg)',
-                                            }
-                                            : {
-                                                transform: 'none',
-                                            },
-                                    ]}
-                                />
-                            </SidebarButton>
-                        )}
-                    >
-                        <List sx={{ gap: 0.5 }}>
-                            <ListItem>
-                                <SidebarButton
-                                    path="/app/steps/assigned"
-                                    sx={{ borderRadius: 8 }}
-                                    preventHighlight
-                                >Assigned Steps</SidebarButton>
-                            </ListItem>
-                        </List>
-                    </ToggleComponent>
+                            </List>
+                        </ToggleComponent>
+                    </RestrictedByPrivilege>
+                    <RestrictedByPrivilege privilege="VIEW_ASSIGNED_STEPS">
+                        <ToggleComponent
+                            renderToggle={({ open, setOpen }) => (
+                                <SidebarButton onClick={() => setOpen(!open)}>
+                                    <ListItemDecorator><FormatListBulleted /></ListItemDecorator>
+                                    <ListItemContent>Steps</ListItemContent>
+                                    <KeyboardArrowDown
+                                        sx={[
+                                            open
+                                                ? {
+                                                    transform: 'rotate(180deg)',
+                                                }
+                                                : {
+                                                    transform: 'none',
+                                                },
+                                        ]}
+                                    />
+                                </SidebarButton>
+                            )}
+                        >
+                            <List sx={{ gap: 0.5 }}>
+                                <ListItem>
+                                    <SidebarButton
+                                        path="/app/steps/assigned"
+                                        sx={{ borderRadius: 8 }}
+                                        preventHighlight
+                                    >Assigned Steps</SidebarButton>
+                                </ListItem>
+                            </List>
+                        </ToggleComponent>
+                    </RestrictedByPrivilege>
                 </List>
             </Box>
         </Sheet>

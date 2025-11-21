@@ -9,6 +9,10 @@ export const humanifyRole = (role: Role) => {
     switch (role) {
         case "ADMIN":
             return "Administrator";
+        case "CAMPAIGN_MANAGER":
+            return "Campaign Manager";
+        case "STEP_MANAGER":
+            return "Step Manager";
         case "USER":
             return "User";
         default:

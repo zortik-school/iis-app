@@ -30,9 +30,10 @@ import type {
 } from "./model/campaign.ts";
 import type {
     ActivateCampaignStepArgs,
-    AddCampaignStepArgs, AddCampaignStepResponse,
+    AddCampaignStepArgs, AddCampaignStepResponse, AssignUserToCampaignStepArgs,
     GetCampaignStepsForCampaignArgs,
-    GetCampaignStepsForCampaignResponse
+    GetCampaignStepsForCampaignResponse, InspectCampaignStepArgs,
+    InspectCampaignStepResponse, ListCampaignStepsArgs, ListCampaignStepsResponse
 } from "./model/step.ts";
 
 export interface GatewayService {
@@ -137,13 +138,6 @@ export interface GatewayService {
     listThemes(args: ListThemesArgs): Promise<ListThemesResponse>;
 
     /**
-     * List campaigns.
-     *
-     * @param args The args
-     */
-    listCampaigns(args: ListCampaignsArgs): Promise<ListCampaignsResponse>;
-
-    /**
      * Create a campaign.
      *
      * @param args The args
@@ -172,6 +166,13 @@ export interface GatewayService {
     assignUserToCampaign(args: AssignUserToCampaignArgs): Promise<unknown>;
 
     /**
+     * List campaigns.
+     *
+     * @param args The args
+     */
+    listCampaigns(args: ListCampaignsArgs): Promise<ListCampaignsResponse>;
+
+    /**
      * Get campaign steps for a campaign.
      *
      * @param args The args
@@ -191,6 +192,27 @@ export interface GatewayService {
      * @param args The args
      */
     activateCampaignStep(args: ActivateCampaignStepArgs): Promise<unknown>;
+
+    /**
+     * Inspect a campaign step.
+     *
+     * @param args The args
+     */
+    inspectCampaignStep(args: InspectCampaignStepArgs): Promise<InspectCampaignStepResponse>;
+
+    /**
+     * Assign a user to a campaign step.
+     *
+     * @param args The args
+     */
+    assignUserToCampaignStep(args: AssignUserToCampaignStepArgs): Promise<unknown>;
+
+    /**
+     * List campaign steps.
+     *
+     * @param args The args
+     */
+    listCampaignSteps(args: ListCampaignStepsArgs): Promise<ListCampaignStepsResponse>;
 
     /**
      * Query users.
@@ -406,6 +428,29 @@ export class GatewayServiceImpl implements GatewayService {
         return this.internalFetch<unknown>(`/steps/${args.stepId}/activate`, {
             method: "POST",
         });
+    }
+
+    async inspectCampaignStep(args: InspectCampaignStepArgs): Promise<InspectCampaignStepResponse> {
+        return this.internalFetch<InspectCampaignStepResponse>(`/steps/${args.stepId}/inspect`);
+    }
+
+    async assignUserToCampaignStep(args: AssignUserToCampaignStepArgs): Promise<unknown> {
+        const body = {
+            userId: args.userId,
+        }
+
+        return this.internalFetch<unknown>(`/steps/${args.stepId}/assign`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async listCampaignSteps(args: ListCampaignStepsArgs): Promise<ListCampaignStepsResponse> {
+        const params = this.buildPageParams(args, {
+            ...args.assigned !== undefined ? {assigned: args.assigned} : {},
+        });
+
+        return this.internalFetch<ListCampaignStepsResponse>(`/steps?${params}`);
     }
 
     async queryUsers(args: QueryUsersArgs): Promise<QueryUsersResponse> {
@@ -638,6 +683,21 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async activateCampaignStep(_args: ActivateCampaignStepArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async inspectCampaignStep(_args: InspectCampaignStepArgs): Promise<InspectCampaignStepResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async assignUserToCampaignStep(_args: AssignUserToCampaignStepArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async listCampaignSteps(_args: ListCampaignStepsArgs): Promise<ListCampaignStepsResponse> {
         return this.unimplemented();
     }
 

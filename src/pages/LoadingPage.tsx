@@ -1,12 +1,10 @@
 import {CenteredLayout} from "../components/layouts/CenteredLayout.tsx";
-import {Typography} from "@mui/joy";
+import {Spinner} from "../components/Spinner.tsx";
 
 export const LoadingPage = () => {
-    // TODO
-
     return (
         <CenteredLayout>
-            <Typography>Loading...</Typography>
+            <Spinner />
         </CenteredLayout>
     )
 }

@@ -14,6 +14,8 @@ import {AssignedCampaignsPage} from "../pages/campaigns/AssignedCampaignsPage.ts
 import {CreateCampaignPage} from "../pages/themes/CreateCampaignPage.tsx";
 import {CampaignSettingsPage} from "../pages/campaigns/CampaignSettingsPage.tsx";
 import {CampaignsPage} from "../pages/campaigns/CampaignsPage.tsx";
+import {AssignedStepsPage} from "../pages/steps/AssignedStepsPage.tsx";
+import {StepSettingsPage} from "../pages/steps/StepSettingsPage.tsx";
 
 export const Routes = () => {
     return (
@@ -36,8 +38,14 @@ export const Routes = () => {
                     <Route path="/app/campaigns" element={<CampaignsPage />} />
                     <Route path="/app/themes/:themeId/createcampaign" element={<CreateCampaignPage />} />
                 </Route>
-                <Route path="/app/campaigns/assigned" element={<AssignedCampaignsPage />} />
-                <Route path="/app/campaigns/:campaignId/edit" element={<CampaignSettingsPage />} />
+                <Route element={<PrivilegedPage privilege="VIEW_ASSIGNED_CAMPAIGNS" />}>
+                    <Route path="/app/campaigns/assigned" element={<AssignedCampaignsPage />} />
+                    <Route path="/app/campaigns/:campaignId/edit" element={<CampaignSettingsPage />} />
+                </Route>
+                <Route element={<PrivilegedPage privilege="VIEW_ASSIGNED_STEPS" />}>
+                    <Route path="/app/steps/assigned" element={<AssignedStepsPage />} />
+                    <Route path="/app/steps/:stepId/edit" element={<StepSettingsPage />} />
+                </Route>
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

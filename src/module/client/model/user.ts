@@ -1,11 +1,16 @@
 import type {PageArgs, PageResponse, QueryArgs} from "./util.ts";
 
 export type Role = "ADMIN"
+    | "CAMPAIGN_MANAGER"
+    | "STEP_MANAGER"
     | "USER";
 
 export type Privilege = "MANAGE_USERS"
     | "MANAGE_THEMES"
-    | "MANAGE_CAMPAIGNS";
+    | "MANAGE_CAMPAIGNS"
+    | "MANAGE_STEPS"
+    | "VIEW_ASSIGNED_CAMPAIGNS"
+    | "VIEW_ASSIGNED_STEPS";
 
 export interface User {
     id: number;
