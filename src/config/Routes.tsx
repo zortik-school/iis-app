@@ -13,6 +13,7 @@ import {ThemeSettingsPage} from "../pages/themes/ThemeSettingsPage.tsx";
 import {AssignedCampaignsPage} from "../pages/campaigns/AssignedCampaignsPage.tsx";
 import {CreateCampaignPage} from "../pages/themes/CreateCampaignPage.tsx";
 import {CampaignSettingsPage} from "../pages/campaigns/CampaignSettingsPage.tsx";
+import {CampaignsPage} from "../pages/campaigns/CampaignsPage.tsx";
 
 export const Routes = () => {
     return (
@@ -32,6 +33,7 @@ export const Routes = () => {
                     <Route path="/app/themes/:themeId/edit" element={<ThemeSettingsPage />} />
                 </Route>
                 <Route element={<PrivilegedPage privilege="MANAGE_CAMPAIGNS" />}>
+                    <Route path="/app/campaigns" element={<CampaignsPage />} />
                     <Route path="/app/themes/:themeId/createcampaign" element={<CreateCampaignPage />} />
                 </Route>
                 <Route path="/app/campaigns/assigned" element={<AssignedCampaignsPage />} />

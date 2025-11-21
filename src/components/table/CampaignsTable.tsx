@@ -7,6 +7,7 @@ import {DeleteForever} from "@mui/icons-material";
 import {Button, Link} from "@mui/joy";
 import {Link as RouterLink} from "react-router";
 import {type Question, useConfirmModal} from "../modal/ConfirmModalContext.tsx";
+import {ThemeLink} from "../ThemeLink.tsx";
 
 export interface CampaignsTableProps {
     themeId?: number;
@@ -66,6 +67,7 @@ export const CampaignsTable = (
                     <thead>
                     <tr>
                         <th>Name</th>
+                        {privileged && <th>Theme</th>}
                         {privileged && <th style={{ width: '50px' }} />}
                     </tr>
                     </thead>
@@ -82,6 +84,9 @@ export const CampaignsTable = (
                                     {campaign.name}
                                 </Link>
                             </td>
+                            {privileged && (
+                                <td><ThemeLink themeId={campaign.themeId}>{campaign.themeId}</ThemeLink></td>
+                            )}
                             {privileged && (
                                 <td>
                                     <Button

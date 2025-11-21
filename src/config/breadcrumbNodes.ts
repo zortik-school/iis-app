@@ -30,6 +30,11 @@ export const AssignedCampaignsBreadcrumbNodes: Node[] = [
     { name : 'Assigned Campaigns', url: '/app/campaigns/assigned' },
 ]
 
+export const CampaignsBreadcrumbNodes: Node[] = [
+    ...HomeBreadcrumbNodes,
+    { name : 'Campaigns', url: '/app/campaigns' },
+]
+
 export const CampaignEditBreadcrumbNodes = (campaign: Campaign): Node[] => [
     ...HomeBreadcrumbNodes,
     { name : 'Theme', url: `/app/themes/${campaign.themeId}/edit` },

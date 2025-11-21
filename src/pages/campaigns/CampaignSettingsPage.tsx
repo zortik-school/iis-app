@@ -1,18 +1,99 @@
-import {useParams} from "react-router-dom";
+import {useParams, Link as RouterLink} from "react-router-dom";
 import {MainLayout} from "../../components/layouts/MainLayout.tsx";
 import {CampaignEditBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
 import useSWR from "swr";
 import {useGateway} from "../../module/client/hooks/useGateway.ts";
 import {LoadingPage} from "../LoadingPage.tsx";
 import {ExpectSWRErrors} from "../../components/ExpectSWRErrors.tsx";
-import {Box, Card, CardContent, Tab, tabClasses, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
+import {
+    Box,
+    Card,
+    CardContent,
+    Tab,
+    tabClasses,
+    TabList,
+    TabPanel,
+    Tabs,
+    Typography,
+    Stepper,
+    Step,
+    StepIndicator,
+    Button,
+    FormControl,
+    FormLabel,
+    Input,
+    ButtonGroup,
+    Chip,
+    Link
+} from "@mui/joy";
 import {UserSelector} from "../../components/UserSelector.tsx";
 import type {User} from "../../module/client/model/user.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
 import {RestrictedByPrivilege} from "../../components/access/RestrictedByPrivilege.tsx";
 import type {Theme} from "../../module/client/model/theme.ts";
 import {UserLink} from "../../components/UserLink.tsx";
+import type {CampaignStep, CampaignStepFull} from "../../module/client/model/step.ts";
+import {type SubmitHandler, useForm} from "react-hook-form";
+
+interface AddStepFormInputs {
+    name: string;
+}
+
+const AddStepForm = (
+    {campaignId, shown, onSubmit}: {
+        campaignId: number;
+        shown: boolean;
+        onSubmit: (step: CampaignStep) => void;
+    }
+) => {
+    const gatewayCall = useGatewayCall();
+
+    const {register, handleSubmit} = useForm<AddStepFormInputs>();
+    const [fetching, setFetching] = useState<boolean>(false);
+
+    const handleFormSubmit: SubmitHandler<AddStepFormInputs> = (data) => {
+        if (fetching) {
+            return;
+        }
+
+        setFetching(true);
+
+        gatewayCall((gateway) => {
+            return gateway.addCampaignStep({
+                name: data.name,
+                campaignId,
+            });
+        })
+            .then((step) => onSubmit(step))
+            .finally(() => setFetching(false));
+    }
+
+    return (
+        shown ? (
+            <form
+                onSubmit={handleSubmit(handleFormSubmit)}
+                className="gap-y-4 flex flex-col mt-2"
+            >
+                <FormControl>
+                    <FormLabel>Step name</FormLabel>
+                    <Input
+                        {...register("name")}
+
+                        required
+                    />
+                </FormControl>
+
+                <Button
+                    type="submit"
+                    sx={{ mt: 1 }}
+                    disabled={fetching}
+                    loading={fetching}
+                >Add</Button>
+            </form>
+        ) : null
+    )
+}
 
 export const CampaignSettingsPage = () => {
     const {campaignId} = useParams<{ campaignId: string }>();
@@ -20,10 +101,30 @@ export const CampaignSettingsPage = () => {
     const gateway = useGateway();
     const gatewayCall = useGatewayCall();
 
-    const {data, isLoading, error, mutate} = useSWR("campaign", () => gateway.inspectCampaign({ campaignId: Number(campaignId) }));
+    const {data, isLoading, error, mutate} = useSWR(
+        "campaign",
+        () => gateway.inspectCampaign({ campaignId: Number(campaignId) })
+    );
     const [theme, setTheme] = useState<Theme | null>(null);
+    const {data: steps, mutate: mutateSteps} = useSWR<CampaignStepFull[]>(
+        "campaign-steps",
+        () => gatewayCall((gateway) => {
+            return gateway.getCampaignStepsForCampaign({ campaignId: Number(campaignId) });
+        })
+    );
     const [assignedUser, setAssignedUser] = useState<User | null>(null);
     const [assignedUserSelectorDisabled, setAssignedUserSelectorDisabled] = useState<boolean>(false);
+
+    const [addStepFormShown, setAddStepFormShown] = useState<boolean>(false);
+    const [stepControlsDisabled, setStepControlsDisabled] = useState<boolean>(false);
+
+    const activeStep = useMemo(() => {
+        if (!steps) {
+            return null;
+        }
+
+        return steps.find((step) => step.active) || null;
+    }, [steps]);
 
     useEffect(() => {
         if (!data) {
@@ -51,6 +152,23 @@ export const CampaignSettingsPage = () => {
             .catch(() => setAssignedUser(null));
     }, [data, gatewayCall]);
 
+    const isStepNext = (stepIndex: number): boolean => {
+        if (!steps) {
+            return false;
+        }
+
+        const activeStep = steps.find((step) => step.active);
+        /*if (activeStep === undefined) {
+            return stepIndex === 0;
+        } else {
+            const activeStepIndex = steps.indexOf(activeStep);
+
+            return stepIndex === activeStepIndex + 1;
+        }*/
+
+        return activeStep === undefined || steps.indexOf(activeStep) !== stepIndex;
+    }
+
     const handleChangeAssignedUser = (user: User | undefined) => {
         setAssignedUserSelectorDisabled(true);
 
@@ -62,6 +180,23 @@ export const CampaignSettingsPage = () => {
         })
             .then(() => mutate())
             .finally(() => setAssignedUserSelectorDisabled(false));
+    }
+
+    const handleActivateStep = (step: CampaignStep) => {
+        if (stepControlsDisabled) {
+            return;
+        }
+
+        setStepControlsDisabled(true);
+        gatewayCall((gateway) => gateway.activateCampaignStep({ stepId: step.id }))
+            .then(() => mutateSteps())
+            .finally(() => setStepControlsDisabled(false));
+    }
+
+    const handleStepAdded = () => {
+        setAddStepFormShown(false);
+
+        mutateSteps();
     }
 
     if (!data && isLoading) {
@@ -118,9 +253,81 @@ export const CampaignSettingsPage = () => {
                                     <Typography>No staff assigned</Typography>
                                 )}
                             </Box>
+                            <Box>
+                                <Typography level="title-lg">Active Step</Typography>
+                                {activeStep ? (
+                                    <Link component={RouterLink} to={`/steps/${activeStep.id}/edit`}>
+                                        {activeStep.name}
+                                    </Link>
+                                ) : <Typography>None</Typography>}
+                            </Box>
                         </TabPanel>
                         <TabPanel value={1}>
-
+                            {steps && (
+                                <Stepper orientation="vertical">
+                                    {steps.map((step, index) => (
+                                        <Step
+                                            key={step.id}
+                                            indicator={
+                                                <StepIndicator
+                                                    {...(step.active ? (
+                                                        {
+                                                            variant: "solid",
+                                                            color: "primary"
+                                                        }
+                                                    ) : (
+                                                        {
+                                                            variant: "soft",
+                                                            color: "neutral"
+                                                        }
+                                                    ))}
+                                                >
+                                                    {index+1}
+                                                </StepIndicator>
+                                            }
+                                        >
+                                            <Typography>{step.name}</Typography>
+                                            <Box>
+                                                <ButtonGroup variant="plain" spacing={1}>
+                                                    {isStepNext(index) && (
+                                                        <Chip
+                                                            color="primary"
+                                                            variant="solid"
+                                                            onClick={() => handleActivateStep(step)}
+                                                            disabled={stepControlsDisabled}
+                                                        >
+                                                            Activate
+                                                        </Chip>
+                                                    )}
+                                                    <Chip
+                                                        color="neutral"
+                                                        variant="outlined"
+                                                        onClick={() => {
+                                                            {/* TODO */}
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </Chip>
+                                                </ButtonGroup>
+                                            </Box>
+                                        </Step>
+                                    ))}
+                                </Stepper>
+                            )}
+                            {steps && steps.length == 0 && <Typography>No steps created.</Typography>}
+                            <AddStepForm
+                                campaignId={Number(campaignId)}
+                                shown={addStepFormShown}
+                                onSubmit={handleStepAdded}
+                            />
+                            {!addStepFormShown ? (
+                                <Button
+                                    sx={{
+                                        mt: 2
+                                    }}
+                                    onClick={() => setAddStepFormShown(true)}
+                                >Add Step</Button>
+                            ) : null}
                         </TabPanel>
                         <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
                             <TabPanel value={2} sx={{px: 0}}>

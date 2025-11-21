@@ -28,6 +28,12 @@ import type {
     ListCampaignsArgs,
     ListCampaignsResponse
 } from "./model/campaign.ts";
+import type {
+    ActivateCampaignStepArgs,
+    AddCampaignStepArgs, AddCampaignStepResponse,
+    GetCampaignStepsForCampaignArgs,
+    GetCampaignStepsForCampaignResponse
+} from "./model/step.ts";
 
 export interface GatewayService {
 
@@ -164,6 +170,27 @@ export interface GatewayService {
      * @param args The args
      */
     assignUserToCampaign(args: AssignUserToCampaignArgs): Promise<unknown>;
+
+    /**
+     * Get campaign steps for a campaign.
+     *
+     * @param args The args
+     */
+    getCampaignStepsForCampaign(args: GetCampaignStepsForCampaignArgs): Promise<GetCampaignStepsForCampaignResponse>;
+
+    /**
+     * Add a campaign step to a campaign.
+     *
+     * @param args The args
+     */
+    addCampaignStep(args: AddCampaignStepArgs): Promise<AddCampaignStepResponse>;
+
+    /**
+     * Activate a campaign step.
+     *
+     * @param args The args
+     */
+    activateCampaignStep(args: ActivateCampaignStepArgs): Promise<unknown>;
 
     /**
      * Query users.
@@ -356,6 +383,28 @@ export class GatewayServiceImpl implements GatewayService {
         return this.internalFetch<unknown>(`/campaigns/${args.campaignId}/assign`, {
             method: "POST",
             body: JSON.stringify(body),
+        });
+    }
+
+    async getCampaignStepsForCampaign(args: GetCampaignStepsForCampaignArgs): Promise<GetCampaignStepsForCampaignResponse> {
+        return this.internalFetch<GetCampaignStepsForCampaignResponse>(`/campaigns/${args.campaignId}/steps`);
+    }
+
+    async addCampaignStep(args: AddCampaignStepArgs): Promise<AddCampaignStepResponse> {
+        const body = {
+            name: args.name,
+            campaignId: args.campaignId,
+        }
+
+        return this.internalFetch<AddCampaignStepResponse>(`/steps`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async activateCampaignStep(args: ActivateCampaignStepArgs): Promise<unknown> {
+        return this.internalFetch<unknown>(`/steps/${args.stepId}/activate`, {
+            method: "POST",
         });
     }
 
@@ -574,6 +623,21 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async assignUserToCampaign(_args: AssignUserToCampaignArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getCampaignStepsForCampaign(_args: GetCampaignStepsForCampaignArgs): Promise<GetCampaignStepsForCampaignResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async addCampaignStep(_args: AddCampaignStepArgs): Promise<AddCampaignStepResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async activateCampaignStep(_args: ActivateCampaignStepArgs): Promise<unknown> {
         return this.unimplemented();
     }
 

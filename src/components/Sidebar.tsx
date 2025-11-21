@@ -8,9 +8,9 @@ import {
     ListItem,
     ListItemButton, type ListItemButtonProps,
 } from "@mui/joy";
-import {Home, Group, KeyboardArrowDown, Campaign, Groups} from '@mui/icons-material';
+import {Home, Group, KeyboardArrowDown, Campaign, Groups, FormatListBulleted} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
-import {type Dispatch, Fragment, type ReactNode, type SetStateAction, useState} from "react";
+import {type Dispatch, type ReactNode, type SetStateAction, useState} from "react";
 import {RestrictedByPrivilege} from "./access/RestrictedByPrivilege.tsx";
 import {ProfileDropdown} from "./ProfileDropdown.tsx";
 
@@ -57,7 +57,7 @@ export const ToggleComponent = ({
     const [open, setOpen] = useState(defaultExpanded);
 
     return (
-        <Fragment>
+        <Box>
             {renderToggle({ open, setOpen })}
 
             <Box
@@ -74,7 +74,7 @@ export const ToggleComponent = ({
             >
                 {open ? children : null}
             </Box>
-        </Fragment>
+        </Box>
     );
 }
 
@@ -164,6 +164,44 @@ export const Sidebar = () => {
                                     sx={{ borderRadius: 8 }}
                                     preventHighlight
                                 >Assigned Campaigns</SidebarButton>
+                            </ListItem>
+                            <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
+                                <ListItem>
+                                    <SidebarButton
+                                        path="/app/campaigns"
+                                        sx={{ borderRadius: 8 }}
+                                        preventHighlight
+                                    >All Campaigns</SidebarButton>
+                                </ListItem>
+                            </RestrictedByPrivilege>
+                        </List>
+                    </ToggleComponent>
+                    <ToggleComponent
+                        renderToggle={({ open, setOpen }) => (
+                            <SidebarButton onClick={() => setOpen(!open)}>
+                                <ListItemDecorator><FormatListBulleted /></ListItemDecorator>
+                                <ListItemContent>Steps</ListItemContent>
+                                <KeyboardArrowDown
+                                    sx={[
+                                        open
+                                            ? {
+                                                transform: 'rotate(180deg)',
+                                            }
+                                            : {
+                                                transform: 'none',
+                                            },
+                                    ]}
+                                />
+                            </SidebarButton>
+                        )}
+                    >
+                        <List sx={{ gap: 0.5 }}>
+                            <ListItem>
+                                <SidebarButton
+                                    path="/app/steps/assigned"
+                                    sx={{ borderRadius: 8 }}
+                                    preventHighlight
+                                >Assigned Steps</SidebarButton>
                             </ListItem>
                         </List>
                     </ToggleComponent>
