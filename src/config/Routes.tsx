@@ -16,6 +16,7 @@ import {CampaignSettingsPage} from "../pages/campaigns/CampaignSettingsPage.tsx"
 import {CampaignsPage} from "../pages/campaigns/CampaignsPage.tsx";
 import {AssignedStepsPage} from "../pages/steps/AssignedStepsPage.tsx";
 import {StepSettingsPage} from "../pages/steps/StepSettingsPage.tsx";
+import {UserPage} from "../pages/users/UserPage.tsx";
 
 export const Routes = () => {
     return (
@@ -46,6 +47,7 @@ export const Routes = () => {
                     <Route path="/app/steps/assigned" element={<AssignedStepsPage />} />
                     <Route path="/app/steps/:stepId/edit" element={<StepSettingsPage />} />
                 </Route>
+                <Route path="/app/users/:userId" element={<UserPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

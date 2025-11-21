@@ -5,8 +5,12 @@ import {useNavigate} from "react-router-dom";
 import {AppDropdown} from "./AppDropdown.tsx";
 
 export const ProfileDropdown = () => {
-    const {logout} = useAuth();
+    const {user, logout} = useAuth();
     const navigate = useNavigate();
+
+    const handleProfileClick = () => {
+        navigate("/app/users/" + user!.id);
+    }
 
     const handleLogoutClick = () => {
         logout().then(() => navigate("/"));
@@ -27,6 +31,7 @@ export const ProfileDropdown = () => {
                 </MenuButton>
             )}
         >
+            <MenuItem onClick={handleProfileClick}>My Profile</MenuItem>
             <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
         </AppDropdown>
     )

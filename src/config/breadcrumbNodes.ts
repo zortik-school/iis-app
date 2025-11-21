@@ -52,3 +52,8 @@ export const StepEditBreadcrumbNodes = (step: CampaignStep): Node[] => [
     { name : 'Campaign', url: `/app/campaigns/${step.campaignId}/edit` },
     { name : 'Edit Step', url: '' },
 ]
+
+export const UserBreadcrumbNodes: Node[] = [
+    ...HomeBreadcrumbNodes,
+    { name : 'User', url: '' },
+]

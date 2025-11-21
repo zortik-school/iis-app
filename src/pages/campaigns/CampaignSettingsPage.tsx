@@ -242,26 +242,36 @@ export const CampaignSettingsPage = () => {
                                 gap: 2
                             }}
                         >
-                            <Box>
-                                <Typography level="title-lg">Theme</Typography>
-                                {theme && <Typography>{theme.name}</Typography>}
-                            </Box>
-                            <Box>
-                                <Typography level="title-lg">Assigned Staff</Typography>
-                                {assignedUser ? (
-                                    <UserLink userId={assignedUser.id}>{assignedUser.name}</UserLink>
-                                ) : (
-                                    <Typography>No staff assigned</Typography>
-                                )}
-                            </Box>
-                            <Box>
-                                <Typography level="title-lg">Active Step</Typography>
-                                {activeStep ? (
-                                    <StepLink stepId={activeStep.id}>{activeStep.name}</StepLink>
-                                ) : (
-                                    <Typography>None</Typography>
-                                )}
-                            </Box>
+                            <Card variant="plain">
+                                <CardContent
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: 2
+                                    }}
+                                >
+                                    <Box>
+                                        <Typography level="title-lg">Theme</Typography>
+                                        {theme && <Typography>{theme.name}</Typography>}
+                                    </Box>
+                                    <Box>
+                                        <Typography level="title-lg">Assigned Staff</Typography>
+                                        {assignedUser ? (
+                                            <UserLink userId={assignedUser.id}>{assignedUser.name}</UserLink>
+                                        ) : (
+                                            <Typography>No staff assigned</Typography>
+                                        )}
+                                    </Box>
+                                    <Box>
+                                        <Typography level="title-lg">Active Step</Typography>
+                                        {activeStep ? (
+                                            <StepLink stepId={activeStep.id}>{activeStep.name}</StepLink>
+                                        ) : (
+                                            <Typography>None</Typography>
+                                        )}
+                                    </Box>
+                                </CardContent>
+                            </Card>
                         </TabPanel>
                         <TabPanel value={1}>
                             {steps && (
@@ -322,7 +332,7 @@ export const CampaignSettingsPage = () => {
                             {!addStepFormShown ? (
                                 <Button
                                     sx={{
-                                        mt: 2
+                                        mt: 4
                                     }}
                                     onClick={() => setAddStepFormShown(true)}
                                 >Add Step</Button>

@@ -74,8 +74,12 @@ export const StepSettingsPage = () => {
                             ) : null}
                         </TabList>
                         <TabPanel value={0}>
-                            <Typography level="title-lg">Assigned Staff</Typography>
-                            {data.assignedUserId ? <UserLink userId={data.assignedUserId} /> : <Typography>No staff assigned</Typography>}
+                            <Card variant="plain">
+                                <CardContent>
+                                    <Typography level="title-lg">Assigned Staff</Typography>
+                                    {data.assignedUserId ? <UserLink userId={data.assignedUserId} /> : <Typography>No staff assigned</Typography>}
+                                </CardContent>
+                            </Card>
                         </TabPanel>
                         <TabPanel value={1}>
                             <Box

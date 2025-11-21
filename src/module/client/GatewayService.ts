@@ -6,6 +6,7 @@ import type {
     RegisterArgs, RegisterResponse
 } from "./model/auth.ts";
 import type {
+    ChangeOwnPasswordArgs,
     ChangeRoleArgs,
     DeleteUserArgs, GetUserArgs, GetUserResponse,
     IdentityUserResponse,
@@ -94,6 +95,13 @@ export interface GatewayService {
      * @param args The args
      */
     changeUserRole(args: ChangeRoleArgs): Promise<unknown>;
+
+    /**
+     * Change own password.
+     *
+     * @param args The args
+     */
+    changeOwnPassword(args: ChangeOwnPasswordArgs): Promise<unknown>;
 
     /**
      * Create a theme.
@@ -316,6 +324,18 @@ export class GatewayServiceImpl implements GatewayService {
         }
 
         return this.internalFetch<unknown>(`/users/${args.userId}/role`, {
+            method: "PUT",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async changeOwnPassword(args: ChangeOwnPasswordArgs): Promise<unknown> {
+        const body = {
+            oldPassword: args.oldPassword,
+            newPassword: args.newPassword,
+        }
+
+        return this.internalFetch<unknown>(`/users/me/password`, {
             method: "PUT",
             body: JSON.stringify(body),
         });
@@ -613,6 +633,11 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async changeUserRole(_args: ChangeRoleArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async changeOwnPassword(_args: ChangeOwnPasswordArgs): Promise<unknown> {
         return this.unimplemented();
     }
 

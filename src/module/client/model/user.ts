@@ -47,3 +47,8 @@ export type GetUserArgs = {
 }
 
 export type GetUserResponse = User;
+
+export interface ChangeOwnPasswordArgs {
+    oldPassword: string;
+    newPassword: string;
+}

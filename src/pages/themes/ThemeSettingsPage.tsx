@@ -147,8 +147,12 @@ export const ThemeSettingsPage = () => {
                             <Tab disableIndicator>Settings</Tab>
                         </TabList>
                         <TabPanel value={0}>
-                            <Typography level="title-lg">Description</Typography>
-                            <Typography>{data?.description}</Typography>
+                            <Card variant="plain">
+                                <CardContent>
+                                    <Typography level="title-lg">Description</Typography>
+                                    <Typography>{data?.description}</Typography>
+                                </CardContent>
+                            </Card>
                         </TabPanel>
                         <TabPanel value={1}>
                             <Box
