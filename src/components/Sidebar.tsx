@@ -8,7 +8,7 @@ import {
     ListItem,
     ListItemButton, type ListItemButtonProps,
 } from "@mui/joy";
-import {Home, KeyboardArrowDown, Campaign, FormatListBulleted, Settings} from '@mui/icons-material';
+import {Home, KeyboardArrowDown, Assignment, ManageAccounts, AdminPanelSettings} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
 import {type Dispatch, type ReactNode, type SetStateAction, useMemo, useState} from "react";
 import {RestrictedByPrivilege} from "./access/RestrictedByPrivilege.tsx";
@@ -112,7 +112,7 @@ export const Sidebar = () => {
             color="neutral"
             sx={{
                 position: { xs: 'fixed', md: 'sticky' },
-                width: "240px",
+                width: "280px",
                 height: "100vh",
                 py: 3,
                 px: 3,
@@ -152,24 +152,58 @@ export const Sidebar = () => {
                             <ListItemContent>Home</ListItemContent>
                         </SidebarButton>
                     </ListItem>
-                    <RestrictedByPrivilege privilege="VIEW_ASSIGNED_CAMPAIGNS">
-                        <SidebarButton path="/app/campaigns/assigned">
-                            <ListItemDecorator><Campaign /></ListItemDecorator>
-                            <ListItemContent>Campaigns</ListItemContent>
+                    <RestrictedByPrivilege privilege="VIEW_ASSIGNED_ACTIVITIES">
+                        <SidebarButton path="/app/activities/browser">
+                            <ListItemDecorator><Assignment /></ListItemDecorator>
+                            <ListItemContent>Activities browser</ListItemContent>
                         </SidebarButton>
                     </RestrictedByPrivilege>
-                    <RestrictedByPrivilege privilege="VIEW_ASSIGNED_STEPS">
-                        <SidebarButton path="/app/steps/assigned">
-                            <ListItemDecorator><FormatListBulleted /></ListItemDecorator>
-                            <ListItemContent>Steps</ListItemContent>
-                        </SidebarButton>
-                    </RestrictedByPrivilege>
+
+                    <ToggleComponent
+                        renderToggle={({ open, setOpen }) => (
+                            <SidebarButton onClick={() => setOpen(!open)}>
+                                <ListItemDecorator><ManageAccounts /></ListItemDecorator>
+                                <ListItemContent>Management</ListItemContent>
+                                <KeyboardArrowDown
+                                    sx={[
+                                        open
+                                            ? {
+                                                transform: 'rotate(180deg)',
+                                            }
+                                            : {
+                                                transform: 'none',
+                                            },
+                                    ]}
+                                />
+                            </SidebarButton>
+                        )}
+
+                        {...([
+                            "/app/campaigns/assigned",
+                            "/app/steps/assigned",
+                        ].some(path => location.pathname.startsWith(path))
+                        && !location.pathname.includes("assigned") ? { open: true } : {})}
+                    >
+                        <List sx={{ gap: 0.5, mt: 1 }}>
+                            <RestrictedByPrivilege privilege="VIEW_ASSIGNED_CAMPAIGNS">
+                                <SidebarButton path="/app/campaigns/assigned" preventHighlight>
+                                    <ListItemContent>Assigned campaigns</ListItemContent>
+                                </SidebarButton>
+                            </RestrictedByPrivilege>
+                            <RestrictedByPrivilege privilege="VIEW_ASSIGNED_STEPS">
+                                <SidebarButton path="/app/steps/assigned" preventHighlight>
+                                    <ListItemContent>Assigned steps</ListItemContent>
+                                </SidebarButton>
+                            </RestrictedByPrivilege>
+                        </List>
+                    </ToggleComponent>
+
                     {hasAnyAdminPrivilege ? (
                         <ToggleComponent
                             renderToggle={({ open, setOpen }) => (
                                 <SidebarButton onClick={() => setOpen(!open)}>
-                                    <ListItemDecorator><Settings /></ListItemDecorator>
-                                    <ListItemContent>Admin</ListItemContent>
+                                    <ListItemDecorator><AdminPanelSettings /></ListItemDecorator>
+                                    <ListItemContent>Administrator</ListItemContent>
                                     <KeyboardArrowDown
                                         sx={[
                                             open

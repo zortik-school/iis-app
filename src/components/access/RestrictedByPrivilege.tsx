@@ -1,9 +1,9 @@
-import type {PropsWithChildren} from "react";
+import {Fragment, type PropsWithChildren} from "react";
 import type {Privilege} from "../../module/client/model/user.ts";
 import {useAuth} from "../../module/auth/hooks/useAuth.ts";
 
 export interface RestrictedByPrivilegeProps extends PropsWithChildren {
-    privilege: Privilege;
+    privilege: Privilege | Privilege[];
 }
 
 export const RestrictedByPrivilege = (
@@ -12,9 +12,13 @@ export const RestrictedByPrivilege = (
     const {user} = useAuth();
 
     if (!user) {
-        // Not event authenticated
+        // Not even authenticated
         return null;
     }
 
-    return user.privileges.includes(privilege) ? <>{children}</> : null;
+    const has = Array.isArray(privilege)
+        ? privilege.some((p) => user.privileges.includes(p))
+        : user.privileges.includes(privilege);
+
+    return has ? <Fragment>{children}</Fragment> : null;
 }

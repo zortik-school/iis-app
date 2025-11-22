@@ -9,10 +9,11 @@ export interface ActivitiesTableProps {
     privileged: boolean;
     stepId?: number;
     assigned?: boolean;
+    available?: boolean;
 }
 
 export const ActivitiesTable = (
-    {privileged, stepId, assigned}: ActivitiesTableProps
+    {privileged, stepId, assigned, available}: ActivitiesTableProps
 ) => {
     const gatewayCall = useGatewayCall();
 
@@ -23,6 +24,7 @@ export const ActivitiesTable = (
             return gateway.listActivities({
                 stepId,
                 assigned,
+                available,
                 page: {
                     index: pageIndex,
                     size: 10

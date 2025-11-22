@@ -18,6 +18,7 @@ import {AssignedStepsPage} from "../pages/steps/AssignedStepsPage.tsx";
 import {StepSettingsPage} from "../pages/steps/StepSettingsPage.tsx";
 import {UserPage} from "../pages/users/UserPage.tsx";
 import {CreateActivityPage} from "../pages/activities/CreateActivityPage.tsx";
+import {ActivitiesBrowserPage} from "../pages/activities/ActivitiesBrowserPage.tsx";
 
 export const Routes = () => {
     return (
@@ -47,9 +48,10 @@ export const Routes = () => {
                 <Route element={<PrivilegedPage privilege="VIEW_ASSIGNED_STEPS" />}>
                     <Route path="/app/steps/assigned" element={<AssignedStepsPage />} />
                     <Route path="/app/steps/:stepId/edit" element={<StepSettingsPage />} />
+                    <Route path="/app/steps/:stepId/createactivity" element={<CreateActivityPage />} />
                 </Route>
                 <Route element={<PrivilegedPage privilege={"VIEW_ASSIGNED_ACTIVITIES"} />}>
-                    <Route path="/app/steps/:stepId/createactivity" element={<CreateActivityPage />} />
+                    <Route path="/app/activities/browser" element={<ActivitiesBrowserPage />} />
                 </Route>
                 <Route path="/app/users/:userId" element={<UserPage />} />
             </Route>

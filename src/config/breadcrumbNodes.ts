@@ -58,6 +58,11 @@ export const StepEditBreadcrumbNodes = (step: CampaignStep): Node[] => [
     { name : 'Edit Step', url: '' },
 ]
 
+export const ActivitiesBreadcrumbNodes: Node[] = [
+    ...HomeBreadcrumbNodes,
+    { name : 'Activities', url: '' },
+]
+
 export const CreateActivityBreadcrumbNodes: Node[] = [
     ...HomeBreadcrumbNodes,
     { name : 'Create Activity', url: '' },
