@@ -43,7 +43,7 @@ export const RevalidateTable = <T,>(
                 setFetching(false);
             }
         })();
-    }, [revalidate, integrityKey]);
+    }, [integrityKey, revalidate]);
 
     const handlePrev = () => {
         if (fetching || !data) {

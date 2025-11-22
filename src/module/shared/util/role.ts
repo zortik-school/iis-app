@@ -13,6 +13,8 @@ export const humanifyRole = (role: Role) => {
             return "Campaign Manager";
         case "STEP_MANAGER":
             return "Step Manager";
+        case "ACTIVITY_EXECUTOR":
+            return "Activity Executor";
         case "USER":
             return "User";
         default:

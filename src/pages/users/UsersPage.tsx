@@ -98,7 +98,13 @@ export const UsersPage = () => {
                                             }}
                                         >{humanifyRole(user.role)}</MenuButton>
                                         <Menu>
-                                            {(["ADMIN", "CAMPAIGN_MANAGER", "STEP_MANAGER", "USER"] as Role[]).map((role) => {
+                                            {([
+                                                "ADMIN",
+                                                "CAMPAIGN_MANAGER",
+                                                "STEP_MANAGER",
+                                                "ACTIVITY_EXECUTOR",
+                                                "USER"
+                                            ] as Role[]).map((role) => {
                                                 return (
                                                     <MenuItem
                                                         key={user.id + "-" + role}

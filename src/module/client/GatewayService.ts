@@ -23,11 +23,12 @@ import type {
     ListThemesResponse, Theme, UpdateThemeArgs
 } from "./model/theme.ts";
 import type {
+    AddUserToCampaignArgs,
     AssignUserToCampaignArgs,
     CreateCampaignArgs, CreateCampaignResponse,
     DeleteCampaignArgs, InspectCampaignArgs, InspectCampaignResponse,
     ListCampaignsArgs,
-    ListCampaignsResponse
+    ListCampaignsResponse, RemoveUserFromCampaignArgs
 } from "./model/campaign.ts";
 import type {
     ActivateCampaignStepArgs,
@@ -174,6 +175,20 @@ export interface GatewayService {
     assignUserToCampaign(args: AssignUserToCampaignArgs): Promise<unknown>;
 
     /**
+     * Add a user to a campaign.
+     *
+     * @param args The args
+     */
+    addUserToCampaign(args: AddUserToCampaignArgs): Promise<unknown>;
+
+    /**
+     * Remove a user from a campaign.
+     *
+     * @param args The args
+     */
+    removeUserFromCampaign(args: RemoveUserFromCampaignArgs): Promise<unknown>;
+
+    /**
      * List campaigns.
      *
      * @param args The args
@@ -303,7 +318,10 @@ export class GatewayServiceImpl implements GatewayService {
     }
 
     async listUsers(args: ListUsersArgs): Promise<ListUsersResponse> {
-        const params = this.buildPageParams(args);
+        const params = this.buildPageParams(args, {
+            ...(args.activityId !== undefined ? {activityId: args.activityId} : {}),
+            ...(args.campaignId !== undefined ? {campaignId: args.campaignId} : {}),
+        });
 
         return this.internalFetch<ListUsersResponse>(`/users?${params}`);
     }
@@ -423,6 +441,28 @@ export class GatewayServiceImpl implements GatewayService {
         }
 
         return this.internalFetch<unknown>(`/campaigns/${args.campaignId}/assign`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async addUserToCampaign(args: AddUserToCampaignArgs): Promise<unknown> {
+        const body = {
+            userId: args.userId,
+        }
+
+        return this.internalFetch<unknown>(`/campaigns/${args.campaignId}/adduser`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async removeUserFromCampaign(args: RemoveUserFromCampaignArgs): Promise<unknown> {
+        const body = {
+            userId: args.userId,
+        }
+
+        return this.internalFetch<unknown>(`/campaigns/${args.campaignId}/removeuser`, {
             method: "POST",
             body: JSON.stringify(body),
         });
@@ -693,6 +733,16 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async assignUserToCampaign(_args: AssignUserToCampaignArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async addUserToCampaign(_args: AddUserToCampaignArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async removeUserFromCampaign(_args: RemoveUserFromCampaignArgs): Promise<unknown> {
         return this.unimplemented();
     }
 

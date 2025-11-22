@@ -155,13 +155,13 @@ export const Sidebar = () => {
                     <RestrictedByPrivilege privilege="VIEW_ASSIGNED_CAMPAIGNS">
                         <SidebarButton path="/app/campaigns/assigned">
                             <ListItemDecorator><Campaign /></ListItemDecorator>
-                            <ListItemContent>My Campaigns</ListItemContent>
+                            <ListItemContent>Campaigns</ListItemContent>
                         </SidebarButton>
                     </RestrictedByPrivilege>
                     <RestrictedByPrivilege privilege="VIEW_ASSIGNED_STEPS">
                         <SidebarButton path="/app/steps/assigned">
                             <ListItemDecorator><FormatListBulleted /></ListItemDecorator>
-                            <ListItemContent>My Steps</ListItemContent>
+                            <ListItemContent>Steps</ListItemContent>
                         </SidebarButton>
                     </RestrictedByPrivilege>
                     {hasAnyAdminPrivilege ? (
@@ -169,7 +169,7 @@ export const Sidebar = () => {
                             renderToggle={({ open, setOpen }) => (
                                 <SidebarButton onClick={() => setOpen(!open)}>
                                     <ListItemDecorator><Settings /></ListItemDecorator>
-                                    <ListItemContent>Settings</ListItemContent>
+                                    <ListItemContent>Admin</ListItemContent>
                                     <KeyboardArrowDown
                                         sx={[
                                             open
@@ -210,11 +210,9 @@ export const Sidebar = () => {
                                 </RestrictedByPrivilege>
                                 <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
                                     <ListItem>
-                                        <SidebarButton
-                                            path="/app/campaigns"
-                                            sx={{ borderRadius: 8 }}
-                                            preventHighlight
-                                        >Campaigns</SidebarButton>
+                                        <SidebarButton path="/app/campaigns" preventHighlight>
+                                            <ListItemContent>Campaigns</ListItemContent>
+                                        </SidebarButton>
                                     </ListItem>
                                 </RestrictedByPrivilege>
                             </List>

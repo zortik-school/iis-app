@@ -27,7 +27,7 @@ import {
 } from "@mui/joy";
 import {UserSelector} from "../../components/UserSelector.tsx";
 import type {User} from "../../module/client/model/user.ts";
-import {useEffect, useMemo, useState} from "react";
+import {Fragment, useCallback, useEffect, useMemo, useState} from "react";
 import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
 import {RestrictedByPrivilege} from "../../components/access/RestrictedByPrivilege.tsx";
 import type {Theme} from "../../module/client/model/theme.ts";
@@ -35,6 +35,9 @@ import {UserLink} from "../../components/UserLink.tsx";
 import type {CampaignStep, CampaignStepFull} from "../../module/client/model/step.ts";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import {StepLink} from "../../components/StepLink.tsx";
+import {RevalidateTable, type RevalidateTableProps} from "../../components/table/RevalidateTable.tsx";
+import {DeleteForever} from "@mui/icons-material";
+import {type Question, useConfirmModal} from "../../components/modal/ConfirmModalContext.tsx";
 
 interface AddStepFormInputs {
     name: string;
@@ -92,6 +95,134 @@ const AddStepForm = (
                 >Add</Button>
             </form>
         ) : null
+    )
+}
+
+const UsersManagementTab = (
+    {campaignId}: { campaignId: number }
+) => {
+    const gatewayCall = useGatewayCall();
+    const {setQuestion} = useConfirmModal();
+
+    const [integrityKey, setIntegrityKey] = useState<number>(0);
+    const [userSelectorShown, setUserSelectorShown] = useState<boolean>(false);
+    const [fetching, setFetching] = useState<boolean>(false);
+
+    const revalidate: RevalidateTableProps<User>["revalidate"] = useCallback(async (pageIndex) => {
+        return gatewayCall((gateway) => {
+            return gateway.listUsers({
+                campaignId,
+                page: {
+                    index: pageIndex,
+                    size: 10
+                }
+            });
+        });
+    }, [campaignId, gatewayCall]);
+
+    const handleOnSelected = useCallback((user: User | undefined) => {
+        setUserSelectorShown(false);
+        if (user == undefined) {
+            return;
+        }
+        if (fetching) {
+            return;
+        }
+
+        setFetching(true);
+        gatewayCall((gateway) => {
+            return gateway.addUserToCampaign({
+                campaignId,
+                userId: user.id
+            });
+        })
+            .then(() => setIntegrityKey(Date.now()))
+            .finally(() => setFetching(false));
+    }, [campaignId, fetching, gatewayCall]);
+
+    const handleDelete = useCallback((userId: number) => {
+        if (fetching) {
+            return;
+        }
+        
+        const question: Question = {
+            title: "Remove User from Campaign?",
+            message: "Are you sure you want to remove this user from the campaign? This action cannot be undone.",
+            onConfirm: () => {
+                setFetching(true);
+                gatewayCall((gateway) => {
+                    return gateway.removeUserFromCampaign({
+                        campaignId,
+                        userId
+                    });
+                })
+                    .then(() => setIntegrityKey(Date.now()))
+                    .finally(() => setFetching(false));
+            }
+        }
+        
+        setQuestion(question);
+    }, [campaignId, fetching, gatewayCall, setQuestion]);
+
+    return (
+        <Fragment>
+            <Box
+                sx={{
+                    maxWidth: "250px",
+                }}
+            >
+                {!userSelectorShown && (
+                    <Button
+                        sx={{
+                            mt: 1
+                        }}
+                        onClick={() => setUserSelectorShown(true)}
+                        disabled={fetching}
+                        loading={fetching}
+                    >Add User</Button>
+                )}
+                {userSelectorShown && (
+                    <UserSelector
+                        sx={{
+                            mt: 1,
+                        }}
+                        onSelected={handleOnSelected}
+                    />
+                )}
+            </Box>
+            <RevalidateTable integrityKey={integrityKey} revalidate={revalidate}>
+                {(users) => (
+                    <Fragment>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style={{ width: '50px' }} />
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {users.map((user) => (
+                            <tr key={user.id}>
+                                <td>
+                                    <UserLink userId={user.id}>{user.name}</UserLink>
+                                </td>
+                                <td>
+                                    <Button
+                                        variant="plain"
+                                        color="neutral"
+                                        size="sm"
+                                        onClick={() => handleDelete(user.id)}
+                                        disabled={fetching}
+                                    >
+                                        <DeleteForever />
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </Fragment>
+                )}
+            </RevalidateTable>
+        </Fragment>
     )
 }
 
@@ -230,6 +361,7 @@ export const CampaignSettingsPage = () => {
                         >
                             <Tab disableIndicator>Info</Tab>
                             <Tab disableIndicator>Steps</Tab>
+                            <Tab disableIndicator>Users</Tab>
                             <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
                                 <Tab disableIndicator>Settings</Tab>
                             </RestrictedByPrivilege>
@@ -300,7 +432,7 @@ export const CampaignSettingsPage = () => {
                                             <Typography>{step.name}</Typography>
                                             <Box>
                                                 <ButtonGroup variant="plain" spacing={1}>
-                                                    {isStepNext(index) && (
+                                                    {isStepNext(index) ? (
                                                         <Chip
                                                             color="primary"
                                                             variant="solid"
@@ -308,6 +440,15 @@ export const CampaignSettingsPage = () => {
                                                             disabled={stepControlsDisabled}
                                                         >
                                                             Activate
+                                                        </Chip>
+                                                    ) : (
+                                                        <Chip
+                                                            color="danger"
+                                                            variant="soft"
+                                                            onClick={() => handleActivateStep(step)}
+                                                            disabled={stepControlsDisabled}
+                                                        >
+                                                            Deactivate
                                                         </Chip>
                                                     )}
                                                     <Chip
@@ -338,8 +479,18 @@ export const CampaignSettingsPage = () => {
                                 >Add Step</Button>
                             ) : null}
                         </TabPanel>
+                        <TabPanel
+                            value={2}
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 2
+                            }}
+                        >
+                            <UsersManagementTab campaignId={Number(campaignId)} />
+                        </TabPanel>
                         <RestrictedByPrivilege privilege="MANAGE_CAMPAIGNS">
-                            <TabPanel value={2} sx={{px: 0}}>
+                            <TabPanel value={3} sx={{px: 0}}>
                                 <Card variant="plain">
                                     <CardContent>
                                         <Typography level="title-lg">Assign Staff</Typography>

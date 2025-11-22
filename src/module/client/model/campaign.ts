@@ -44,3 +44,13 @@ export interface AssignUserToCampaignArgs {
     campaignId: number;
     userId?: number;
 }
+
+export interface AddUserToCampaignArgs {
+    campaignId: number;
+    userId: number;
+}
+
+export interface RemoveUserFromCampaignArgs {
+    campaignId: number;
+    userId: number;
+}

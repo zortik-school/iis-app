@@ -3,6 +3,7 @@ import type {PageArgs, PageResponse, QueryArgs} from "./util.ts";
 export type Role = "ADMIN"
     | "CAMPAIGN_MANAGER"
     | "STEP_MANAGER"
+    | "ACTIVITY_EXECUTOR"
     | "USER";
 
 export type Privilege = "MANAGE_USERS"
@@ -10,7 +11,9 @@ export type Privilege = "MANAGE_USERS"
     | "MANAGE_CAMPAIGNS"
     | "MANAGE_STEPS"
     | "VIEW_ASSIGNED_CAMPAIGNS"
-    | "VIEW_ASSIGNED_STEPS";
+    | "VIEW_ASSIGNED_STEPS"
+    | "VIEW_ASSIGNED_ACTIVITIES"
+    | "VIEW_AVAILABLE_ACTIVITIES";
 
 export interface User {
     id: number;
@@ -25,7 +28,10 @@ export interface IdentityUser extends User {
 
 export type IdentityUserResponse = IdentityUser;
 
-export type ListUsersArgs = PageArgs;
+export interface ListUsersArgs extends PageArgs {
+    activityId?: number;
+    campaignId?: number;
+}
 
 export type ListUsersResponse = PageResponse<User>;
 
