@@ -36,6 +36,11 @@ export const CampaignsBreadcrumbNodes: Node[] = [
     { name : 'Campaigns', url: '/app/campaigns' },
 ]
 
+export const CreateCampaignBreadcrumbNodes: Node[] = [
+    ...CampaignsBreadcrumbNodes,
+    { name : 'Create Campaign', url: '/app/campaigns/create' },
+]
+
 export const CampaignEditBreadcrumbNodes = (campaign: Campaign): Node[] => [
     ...HomeBreadcrumbNodes,
     { name : 'Theme', url: `/app/themes/${campaign.themeId}/edit` },
@@ -51,6 +56,11 @@ export const StepEditBreadcrumbNodes = (step: CampaignStep): Node[] => [
     ...HomeBreadcrumbNodes,
     { name : 'Campaign', url: `/app/campaigns/${step.campaignId}/edit` },
     { name : 'Edit Step', url: '' },
+]
+
+export const CreateActivityBreadcrumbNodes: Node[] = [
+    ...HomeBreadcrumbNodes,
+    { name : 'Create Activity', url: '' },
 ]
 
 export const UserBreadcrumbNodes: Node[] = [

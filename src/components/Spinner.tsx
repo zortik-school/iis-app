@@ -1,7 +1,9 @@
-import {CircularProgress} from "@mui/joy";
+import {CircularProgress, type CircularProgressProps} from "@mui/joy";
 
-export const Spinner = () => {
+export const Spinner = (
+    {sx, ...rest}: CircularProgressProps
+) => {
     return (
-        <CircularProgress size="sm" sx={{ bgcolor: 'background.surface' }} />
+        <CircularProgress size="sm" sx={{ bgcolor: 'background.surface', ...sx }} {...rest} />
     )
 }

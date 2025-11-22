@@ -193,7 +193,7 @@ export const Sidebar = () => {
                                 && !location.pathname.includes("assigned")
                                 && !location.pathname.startsWith("/app/users/") ? { open: true } : {})}
                         >
-                            <List sx={{ gap: 0.5, mx: 1, mt: 1 }}>
+                            <List sx={{ gap: 0.5, mt: 1 }}>
                                 <RestrictedByPrivilege privilege="MANAGE_USERS">
                                     <ListItem>
                                         <SidebarButton path="/app/users" preventHighlight>

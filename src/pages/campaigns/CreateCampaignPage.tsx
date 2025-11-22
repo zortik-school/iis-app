@@ -1,6 +1,6 @@
 import {FormControl, FormLabel, Input, Button, Box} from "@mui/joy";
 import {MainLayout} from "../../components/layouts/MainLayout.tsx";
-import {CreateThemeBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
+import {CreateCampaignBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -35,7 +35,7 @@ export const CreateCampaignPage = () => {
     }
 
     return (
-        <MainLayout title="Create Theme" breadcrumbNodes={CreateThemeBreadcrumbNodes}>
+        <MainLayout title="Create Campaign" breadcrumbNodes={CreateCampaignBreadcrumbNodes}>
             <form
                 onSubmit={handleSubmit(onSubmitValid)}
                 className="flex flex-col"

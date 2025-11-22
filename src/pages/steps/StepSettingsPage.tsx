@@ -11,6 +11,7 @@ import type {User} from "../../module/client/model/user.ts";
 import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
 import {useState} from "react";
 import {UserLink} from "../../components/UserLink.tsx";
+import {ActivitiesTable} from "../../components/table/ActivitiesTable.tsx";
 
 export const StepSettingsPage = () => {
     const {stepId} = useParams<{ stepId: string }>();
@@ -92,7 +93,7 @@ export const StepSettingsPage = () => {
                             >
                                 <Button onClick={() => navigate(`/app/steps/${stepId}/createactivity`)}>Create Activity</Button>
                             </Box>
-                            {/* TODO activities table */}
+                            <ActivitiesTable privileged={true} stepId={Number(stepId)} />
                         </TabPanel>
                         {data.accessPrivileges.ASSIGN_STAFF ? (
                             <TabPanel value={2} sx={{ px: 0 }}>

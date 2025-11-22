@@ -37,6 +37,12 @@ import type {
     GetCampaignStepsForCampaignResponse, InspectCampaignStepArgs,
     InspectCampaignStepResponse, ListCampaignStepsArgs, ListCampaignStepsResponse
 } from "./model/step.ts";
+import type {
+    CreateActivityArgs,
+    CreateActivityResponse, DeleteActivityArgs,
+    ListActivitiesArgs,
+    ListActivitiesResponse
+} from "./model/activity.ts";
 
 export interface GatewayService {
 
@@ -236,6 +242,27 @@ export interface GatewayService {
      * @param args The args
      */
     listCampaignSteps(args: ListCampaignStepsArgs): Promise<ListCampaignStepsResponse>;
+
+    /**
+     * Create an activity.
+     *
+     * @param args The args
+     */
+    createActivity(args: CreateActivityArgs): Promise<CreateActivityResponse>;
+
+    /**
+     * Delete an activity.
+     *
+     * @param args The args
+     */
+    deleteActivity(args: DeleteActivityArgs): Promise<unknown>;
+
+    /**
+     * List activities.
+     *
+     * @param args The args
+     */
+    listActivities(args: ListActivitiesArgs): Promise<ListActivitiesResponse>;
 
     /**
      * Query users.
@@ -513,6 +540,37 @@ export class GatewayServiceImpl implements GatewayService {
         return this.internalFetch<ListCampaignStepsResponse>(`/steps?${params}`);
     }
 
+    async createActivity(args: CreateActivityArgs): Promise<CreateActivityResponse> {
+        const body = {
+            name: args.name,
+            description: args.description,
+            stepId: args.stepId,
+            startDate: args.startDate,
+            endDate: args.endDate,
+        }
+
+        return this.internalFetch<CreateActivityResponse>(`/activities`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async deleteActivity(args: DeleteActivityArgs): Promise<unknown> {
+        return this.internalFetch<unknown>(`/activities/${args.activityId}`, {
+            method: "DELETE",
+        });
+    }
+
+    async listActivities(args: ListActivitiesArgs): Promise<ListActivitiesResponse> {
+        const params = this.buildPageParams(args, {
+            ...args.stepId !== undefined ? {stepId: args.stepId} : {},
+            ...args.assigned !== undefined ? {assigned: args.assigned} : {},
+            ...args.available !== undefined ? {available: args.available} : {},
+        });
+
+        return this.internalFetch<ListActivitiesResponse>(`/activities?${params}`);
+    }
+
     async queryUsers(args: QueryUsersArgs): Promise<QueryUsersResponse> {
         const params = this.buildPageParams(args, {
             query: args.query,
@@ -773,6 +831,21 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async listCampaignSteps(_args: ListCampaignStepsArgs): Promise<ListCampaignStepsResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async createActivity(_args: CreateActivityArgs): Promise<CreateActivityResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async deleteActivity(_args: DeleteActivityArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async listActivities(_args: ListActivitiesArgs): Promise<ListActivitiesResponse> {
         return this.unimplemented();
     }
 
