@@ -12,7 +12,7 @@ import {NotificationSnackbar} from "./components/notification/NotificationSnackb
 
 function App() {
     return (
-        <CssVarsProvider defaultMode="light">
+        <CssVarsProvider defaultMode="dark">
             <CssBaseline />
 
             <ConfirmModalProvider>
