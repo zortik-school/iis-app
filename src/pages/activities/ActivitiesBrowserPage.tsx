@@ -32,7 +32,7 @@ export const ActivitiesBrowserPage = () => {
                     <Tab disableIndicator>Assigned</Tab>
                 </TabList>
                 <TabPanel value={0}>
-                    <ActivitiesTable available />
+                    <ActivitiesTable available readOnly />
                 </TabPanel>
                 <TabPanel value={1}>
                     <ActivitiesTable assigned />
