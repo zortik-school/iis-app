@@ -20,7 +20,7 @@ export const CampaignStepsTable = (
     const {user} = useAuth();
     const {setQuestion} = useConfirmModal();
 
-    const [integrityKey, setIntegrityKey] = useState<number>(0);
+    const [integrityKey] = useState<number>(0);
     const [privileged, setPrivileged] = useState<boolean>(false);
     const [controlsLocked, setControlsLocked] = useState<boolean>(false);
 
@@ -42,7 +42,7 @@ export const CampaignStepsTable = (
         });
     }
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (/*_: number*/) => {
         const question: Question = {
             title: "Delete Step?",
             message: "Are you sure you want to delete this campaign step? This action cannot be undone.",
@@ -84,7 +84,7 @@ export const CampaignStepsTable = (
                                         variant="plain"
                                         color="neutral"
                                         size="sm"
-                                        onClick={() => handleDelete(step.id)}
+                                        onClick={() => handleDelete(/*step.id*/)}
                                         disabled={controlsLocked}
                                     >
                                         <DeleteForever />
