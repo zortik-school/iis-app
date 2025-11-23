@@ -6,18 +6,17 @@ import {ActivityCard} from "../ActivityCard.tsx";
 import Grid from "@mui/joy/Grid";
 
 export interface ActivitiesTableProps {
-    privileged: boolean;
     stepId?: number;
     assigned?: boolean;
     available?: boolean;
 }
 
 export const ActivitiesTable = (
-    {privileged, stepId, assigned, available}: ActivitiesTableProps
+    {stepId, assigned, available}: ActivitiesTableProps
 ) => {
     const gatewayCall = useGatewayCall();
 
-    const [integrityKey, setIntegrityKey] = useState<number>(0);
+    const [integrityKey] = useState<number>(0);
 
     const handleRevalidate: RevalidateTableProps<Activity>["revalidate"] = (pageIndex) => {
         return gatewayCall((gateway) => {
@@ -43,11 +42,7 @@ export const ActivitiesTable = (
                 <Grid container spacing={2} sx={{ flexGrow: 1 }}>
                     {activities.map((activity) => (
                         <Grid xs={4} key={activity.id}>
-                            <ActivityCard
-                                activity={activity}
-                                privileged={privileged}
-                                setIntegrityKey={setIntegrityKey}
-                            />
+                            <ActivityCard activity={activity} />
                         </Grid>
                     ))}
                 </Grid>

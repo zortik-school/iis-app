@@ -40,12 +40,12 @@ export interface InspectCampaignStepArgs {
     stepId: number;
 }
 
-export type InspectAccessPrivilege = "ASSIGN_STAFF";
+export type StepInspectAccessPrivilege = "ASSIGN_STAFF";
 
 export interface InspectCampaignStepResponse {
     step: CampaignStep;
     assignedUserId?: number;
-    accessPrivileges: Record<InspectAccessPrivilege, boolean>;
+    accessPrivileges: Record<StepInspectAccessPrivilege, boolean>;
 }
 
 export interface AssignUserToCampaignStepArgs {

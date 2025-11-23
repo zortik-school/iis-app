@@ -159,44 +159,46 @@ export const Sidebar = () => {
                         </SidebarButton>
                     </RestrictedByPrivilege>
 
-                    <ToggleComponent
-                        renderToggle={({ open, setOpen }) => (
-                            <SidebarButton onClick={() => setOpen(!open)}>
-                                <ListItemDecorator><ManageAccounts /></ListItemDecorator>
-                                <ListItemContent>Management</ListItemContent>
-                                <KeyboardArrowDown
-                                    sx={[
-                                        open
-                                            ? {
-                                                transform: 'rotate(180deg)',
-                                            }
-                                            : {
-                                                transform: 'none',
-                                            },
-                                    ]}
-                                />
-                            </SidebarButton>
-                        )}
+                    <RestrictedByPrivilege privilege={["VIEW_ASSIGNED_CAMPAIGNS", "VIEW_ASSIGNED_STEPS"]}>
+                        <ToggleComponent
+                            renderToggle={({ open, setOpen }) => (
+                                <SidebarButton onClick={() => setOpen(!open)}>
+                                    <ListItemDecorator><ManageAccounts /></ListItemDecorator>
+                                    <ListItemContent>Management</ListItemContent>
+                                    <KeyboardArrowDown
+                                        sx={[
+                                            open
+                                                ? {
+                                                    transform: 'rotate(180deg)',
+                                                }
+                                                : {
+                                                    transform: 'none',
+                                                },
+                                        ]}
+                                    />
+                                </SidebarButton>
+                            )}
 
-                        {...([
-                            "/app/campaigns/assigned",
-                            "/app/steps/assigned",
-                        ].some(path => location.pathname.startsWith(path))
-                        && !location.pathname.includes("assigned") ? { open: true } : {})}
-                    >
-                        <List sx={{ gap: 0.5, mt: 1 }}>
-                            <RestrictedByPrivilege privilege="VIEW_ASSIGNED_CAMPAIGNS">
-                                <SidebarButton path="/app/campaigns/assigned" preventHighlight>
-                                    <ListItemContent>Assigned campaigns</ListItemContent>
-                                </SidebarButton>
-                            </RestrictedByPrivilege>
-                            <RestrictedByPrivilege privilege="VIEW_ASSIGNED_STEPS">
-                                <SidebarButton path="/app/steps/assigned" preventHighlight>
-                                    <ListItemContent>Assigned steps</ListItemContent>
-                                </SidebarButton>
-                            </RestrictedByPrivilege>
-                        </List>
-                    </ToggleComponent>
+                            {...([
+                                "/app/campaigns/assigned",
+                                "/app/steps/assigned",
+                            ].some(path => location.pathname.startsWith(path))
+                            && !location.pathname.includes("assigned") ? { open: true } : {})}
+                        >
+                            <List sx={{ gap: 0.5, mt: 1 }}>
+                                <RestrictedByPrivilege privilege="VIEW_ASSIGNED_CAMPAIGNS">
+                                    <SidebarButton path="/app/campaigns/assigned" preventHighlight>
+                                        <ListItemContent>Assigned campaigns</ListItemContent>
+                                    </SidebarButton>
+                                </RestrictedByPrivilege>
+                                <RestrictedByPrivilege privilege="VIEW_ASSIGNED_STEPS">
+                                    <SidebarButton path="/app/steps/assigned" preventHighlight>
+                                        <ListItemContent>Assigned steps</ListItemContent>
+                                    </SidebarButton>
+                                </RestrictedByPrivilege>
+                            </List>
+                        </ToggleComponent>
+                    </RestrictedByPrivilege>
 
                     {hasAnyAdminPrivilege ? (
                         <ToggleComponent

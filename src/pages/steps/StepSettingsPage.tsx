@@ -5,13 +5,94 @@ import {LoadingPage} from "../LoadingPage.tsx";
 import {ExpectSWRErrors} from "../../components/ExpectSWRErrors.tsx";
 import {MainLayout} from "../../components/layouts/MainLayout.tsx";
 import {StepEditBreadcrumbNodes} from "../../config/breadcrumbNodes.ts";
-import {Box, Button, Card, CardContent, Tab, tabClasses, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Tab,
+    tabClasses,
+    TabList,
+    TabPanel,
+    Tabs,
+    Typography
+} from "@mui/joy";
 import {UserSelector} from "../../components/UserSelector.tsx";
 import type {User} from "../../module/client/model/user.ts";
 import {useGatewayCall} from "../../module/client/hooks/useGatewayCall.ts";
-import {useState} from "react";
+import {Fragment, useState} from "react";
 import {UserLink} from "../../components/UserLink.tsx";
-import {ActivitiesTable} from "../../components/table/ActivitiesTable.tsx";
+import {RevalidateTable, type RevalidateTableProps} from "../../components/table/RevalidateTable.tsx";
+import type {Activity} from "../../module/client/model/activity.ts";
+import {DeleteForever} from "@mui/icons-material";
+import {ActivityStateBadge} from "../../components/ActivityStateBadge.tsx";
+import {AppLink} from "../../components/AppLink.tsx";
+
+const ActivitiesTable = (
+    {stepId}: { stepId: number }
+) => {
+    const gatewayCall = useGatewayCall();
+
+    const [integrityKey, setIntegrityKey] = useState<number>(0);
+    const [controlsLocked, setControlsLocked] = useState<boolean>(false);
+
+    const handleRevalidateActivities: RevalidateTableProps<Activity>["revalidate"] = (pageIndex) => {
+        return gatewayCall((gateway) => {
+            return gateway.listActivities({
+                stepId,
+                page: {
+                    index: pageIndex,
+                    size: 10
+                }
+            });
+        });
+    }
+
+    const handleDelete = (activityId: number) => {
+        setControlsLocked(true);
+
+        gatewayCall((gateway) => {
+            return gateway.deleteActivity({ activityId });
+        })
+            .then(() => setIntegrityKey(Date.now()))
+            .finally(() => setControlsLocked(false));
+    }
+
+    return (
+        <RevalidateTable integrityKey={integrityKey} revalidate={handleRevalidateActivities}>
+            {(items) => (
+                <Fragment>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>State</th>
+                        <th style={{ width: '50px' }} />
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {items.map((activity) => (
+                        <tr key={activity.id}>
+                            <td><AppLink to={`/app/activities/${activity.id}/edit`}>{activity.name}</AppLink></td>
+                            <td><ActivityStateBadge state={activity.state} /></td>
+                            <td>
+                                <Button
+                                    variant="plain"
+                                    color="neutral"
+                                    size="sm"
+                                    onClick={() => handleDelete(activity.id)}
+                                    disabled={controlsLocked}
+                                >
+                                    <DeleteForever />
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </Fragment>
+            )}
+        </RevalidateTable>
+    )
+}
 
 export const StepSettingsPage = () => {
     const {stepId} = useParams<{ stepId: string }>();
@@ -93,7 +174,7 @@ export const StepSettingsPage = () => {
                             >
                                 <Button onClick={() => navigate(`/app/steps/${stepId}/createactivity`)}>Create Activity</Button>
                             </Box>
-                            <ActivitiesTable privileged={true} stepId={Number(stepId)} />
+                            <ActivitiesTable stepId={Number(stepId)} />
                         </TabPanel>
                         {data.accessPrivileges.ASSIGN_STAFF ? (
                             <TabPanel value={2} sx={{ px: 0 }}>

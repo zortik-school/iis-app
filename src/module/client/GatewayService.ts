@@ -38,10 +38,13 @@ import type {
     InspectCampaignStepResponse, ListCampaignStepsArgs, ListCampaignStepsResponse
 } from "./model/step.ts";
 import type {
+    AddUserToActivityArgs,
+    CloseActivityArgs,
     CreateActivityArgs,
-    CreateActivityResponse, DeleteActivityArgs,
+    CreateActivityResponse, DeleteActivityArgs, GetActivityArgs,
+    GetActivityResponse, InspectActivityArgs, InspectActivityResponse,
     ListActivitiesArgs,
-    ListActivitiesResponse
+    ListActivitiesResponse, OpenActivityArgs, RemoveUserFromActivityArgs
 } from "./model/activity.ts";
 
 export interface GatewayService {
@@ -256,6 +259,48 @@ export interface GatewayService {
      * @param args The args
      */
     deleteActivity(args: DeleteActivityArgs): Promise<unknown>;
+
+    /**
+     * Get an activity.
+     *
+     * @param args The args
+     */
+    getActivity(args: GetActivityArgs): Promise<GetActivityResponse>;
+
+    /**
+     * Inspect an activity.
+     *
+     * @param args The args
+     */
+    inspectActivity(args: InspectActivityArgs): Promise<InspectActivityResponse>;
+
+    /**
+     * Open an activity.
+     *
+     * @param args The args
+     */
+    openActivity(args: OpenActivityArgs): Promise<unknown>;
+
+    /**
+     * Close an activity.
+     *
+     * @param args The args
+     */
+    closeActivity(args: CloseActivityArgs): Promise<unknown>;
+
+    /**
+     * Add a user to an activity.
+     *
+     * @param args The args
+     */
+    addUserToActivity(args: AddUserToActivityArgs): Promise<unknown>;
+
+    /**
+     * Remove a user from an activity.
+     *
+     * @param args The args
+     */
+    removeUserFromActivity(args: RemoveUserFromActivityArgs): Promise<unknown>;
 
     /**
      * List activities.
@@ -561,6 +606,53 @@ export class GatewayServiceImpl implements GatewayService {
         });
     }
 
+    async getActivity(args: GetActivityArgs): Promise<GetActivityResponse> {
+        return this.internalFetch<GetActivityResponse>(`/activities/${args.activityId}`);
+    }
+
+    async inspectActivity(args: InspectActivityArgs): Promise<InspectActivityResponse> {
+        return this.internalFetch<InspectActivityResponse>(`/activities/${args.activityId}/inspect`);
+    }
+
+    async openActivity(args: OpenActivityArgs): Promise<unknown> {
+        return this.internalFetch<unknown>(`/activities/${args.activityId}/open`, {
+            method: "POST",
+        });
+    }
+
+    async closeActivity(args: CloseActivityArgs): Promise<unknown> {
+        const body = {
+            note: args.note,
+        }
+
+        return this.internalFetch<unknown>(`/activities/${args.activityId}/close`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async addUserToActivity(args: AddUserToActivityArgs): Promise<unknown> {
+        const body = {
+            userId: args.userId,
+        }
+
+        return this.internalFetch<unknown>(`/activities/${args.activityId}/adduser`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
+    async removeUserFromActivity(args: RemoveUserFromActivityArgs): Promise<unknown> {
+        const body = {
+            userId: args.userId,
+        }
+
+        return this.internalFetch<unknown>(`/activities/${args.activityId}/removeuser`, {
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+    }
+
     async listActivities(args: ListActivitiesArgs): Promise<ListActivitiesResponse> {
         const params = this.buildPageParams(args, {
             ...args.stepId !== undefined ? {stepId: args.stepId} : {},
@@ -841,6 +933,36 @@ export class UnimplementedGatewayService implements GatewayService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async deleteActivity(_args: DeleteActivityArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getActivity(_args: GetActivityArgs): Promise<GetActivityResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async inspectActivity(_args: InspectActivityArgs): Promise<InspectActivityResponse> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async openActivity(_args: OpenActivityArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async closeActivity(_args: CloseActivityArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async addUserToActivity(_args: AddUserToActivityArgs): Promise<unknown> {
+        return this.unimplemented();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async removeUserFromActivity(_args: RemoveUserFromActivityArgs): Promise<unknown> {
         return this.unimplemented();
     }
 

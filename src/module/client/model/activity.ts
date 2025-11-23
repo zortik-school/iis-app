@@ -44,3 +44,41 @@ export type ListActivitiesResponse = PageResponse<Activity>;
 export interface DeleteActivityArgs {
     activityId: number;
 }
+
+export type ActivityInspectAccessPrivilege = "CHANGE_STATE" | "ASSIGN_STAFF";
+
+export interface InspectActivityArgs {
+    activityId: number;
+}
+
+export interface InspectActivityResponse {
+    activity: Activity;
+    accessPrivileges: Record<ActivityInspectAccessPrivilege, boolean>;
+}
+
+export interface OpenActivityArgs {
+    activityId: number;
+}
+
+export interface CloseActivityArgs {
+    activityId: number;
+    note?: {
+        content: string;
+    }
+}
+
+export interface AddUserToActivityArgs {
+    activityId: number;
+    userId: number;
+}
+
+export interface RemoveUserFromActivityArgs {
+    activityId: number;
+    userId: number;
+}
+
+export interface GetActivityArgs {
+    activityId: number;
+}
+
+export type GetActivityResponse = Activity;
