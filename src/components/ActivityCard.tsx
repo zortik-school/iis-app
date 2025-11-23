@@ -12,10 +12,12 @@ import {useNavigate} from "react-router-dom";
 
 export interface ActivityCardProps {
     activity: Activity;
+    readOnly?: boolean;
 }
 
 export const ActivityCard = ({
-                                 activity
+                                 activity,
+                                 readOnly = false
                              }: ActivityCardProps) => {
     const navigate = useNavigate();
 
@@ -41,14 +43,16 @@ export const ActivityCard = ({
                 <Typography level="body-xs" sx={{ color: "text.tertiary" }}>
                     Created at: {new Date().toLocaleDateString()}
                 </Typography>
-                <Button
-                    sx={{
-                        mt: 2,
-                    }}
-                    onClick={() => navigate("/app/activities/" + activity.id)}
-                >
-                    View Activity
-                </Button>
+                {readOnly ? null : (
+                    <Button
+                        sx={{
+                            mt: 2,
+                        }}
+                        onClick={() => navigate("/app/activities/" + activity.id)}
+                    >
+                        View Activity
+                    </Button>
+                )}
             </CardContent>
         </Card>
     );

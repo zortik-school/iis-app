@@ -9,10 +9,11 @@ export interface ActivitiesTableProps {
     stepId?: number;
     assigned?: boolean;
     available?: boolean;
+    readOnly?: boolean;
 }
 
 export const ActivitiesTable = (
-    {stepId, assigned, available}: ActivitiesTableProps
+    {stepId, assigned, available, readOnly}: ActivitiesTableProps
 ) => {
     const gatewayCall = useGatewayCall();
 
@@ -42,7 +43,7 @@ export const ActivitiesTable = (
                 <Grid container spacing={2} sx={{ flexGrow: 1 }}>
                     {activities.map((activity) => (
                         <Grid xs={4} key={activity.id}>
-                            <ActivityCard activity={activity} />
+                            <ActivityCard activity={activity} readOnly={readOnly} />
                         </Grid>
                     ))}
                 </Grid>
